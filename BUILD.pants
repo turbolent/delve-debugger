@@ -1,5 +1,3 @@
-
-
 node_module(
   name='debugger-module',
   sources=rglobs('package.json', 'yarn.lock', 'tsconfig.json', 'tsconfig.test.json', 'tslint.json', 'src/*', 'public/*'),
