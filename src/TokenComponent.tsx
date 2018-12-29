@@ -1,10 +1,11 @@
 import * as React from 'react';
 import './TokenComponent.css';
-import { schemeCategory20, scaleOrdinal } from 'd3-scale';
+import { scaleOrdinal } from 'd3-scale';
+import { schemePaired } from 'd3-scale-chromatic';
 import { Token } from './types';
 
 const tags = ['JJ', 'NN', 'VB', 'W', 'DT', 'IN', 'POS', 'RB', 'CD', 'CC'];
-const scale = scaleOrdinal(schemeCategory20).domain(tags);
+const scale = scaleOrdinal(schemePaired).domain(tags);
 const fallbackColor = '#ddd';
 
 interface Props {

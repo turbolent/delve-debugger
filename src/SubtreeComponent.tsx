@@ -3,40 +3,23 @@ import * as React from 'react';
 import './SubtreeComponent.css';
 import { ReactNode } from 'react';
 import TokenComponent from './TokenComponent';
-import { schemeCategory10, scaleOrdinal } from 'd3-scale';
+import { scaleOrdinal } from 'd3-scale';
+import { schemeCategory10 } from 'd3-scale-chromatic'
 
-const types = {
-    question: [
-        'ListQuestion', 'PersonListQuestion', 'ThingListQuestion'
-    ],
-    value: [
-        'AndValue', 'OrValue', 'RelationshipValue', 'NamedValue',
-        'Number', 'NumberWithUnit'
-    ],
-    query: [
-        'AndQuery', 'RelationshipQuery', 'NamedQuery', 'QueryWithProperty',
-    ],
-    property: [
-        'AndProperty', 'OrProperty', 'NamedProperty',
-        'PropertyWithFilter', 'InversePropertyWithFilter', 'AdjectivePropertyWithFilter'
-    ],
-    filter: [
-        'AndFilter', 'OrFilter', 'PlainFilter',
-        'FilterWithModifier', 'FilterWithComparativeModifier'
-    ]
-};
+const types = [
+    'list-question',
+    'value',
+    'query',
+    'property',
+    'filter'
+];
 
-const scale = scaleOrdinal(schemeCategory10)
-    .domain(Object.keys(types));
-
-const typeCategories = {};
-Object.keys(types).forEach(category =>
-    types[category].forEach((type: string) =>
-        typeCategories[type] = category));
+const scale = scaleOrdinal(schemeCategory10).domain(types);
 
 interface Props {
     readonly name?: string;
     readonly type?: string;
+    readonly subtype?: string;
     readonly children: (Tree | Token)[];
 }
 
@@ -47,6 +30,7 @@ class SubtreeComponent extends React.Component<Props> {
             <SubtreeComponent
                 name={node.name}
                 type={node.type}
+                subtype={node.subtype}
                 children={node.children}
                 key={key}
             />
@@ -73,7 +57,7 @@ class SubtreeComponent extends React.Component<Props> {
     }
 
     render() {
-        const {name, type, children} = this.props;
+        const {name, type, subtype, children} = this.props;
 
         let nameNode;
         if (name) {
@@ -82,12 +66,12 @@ class SubtreeComponent extends React.Component<Props> {
 
         let typeNode;
         if (type) {
-            const color = scale(typeCategories[type]);
+            const color = scale(type);
             let style;
             if (color) {
                 style = {color};
             }
-            typeNode = <div className="SubtreeType" style={style}>{type}</div>;
+            typeNode = <div className="SubtreeType" style={style}>{type} {subtype}</div>;
         }
 
         const childNodes = children.map((child, key) => {

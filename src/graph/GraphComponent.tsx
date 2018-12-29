@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation, Simulation } from 'd3-force';
+import { forceCenter, forceCollide, forceLink, forceSimulation, Simulation } from 'd3-force';
+import { forceManyBodyReuse } from 'd3-force-reuse'
 import {
     GraphComponentConjunctionNode,
     GraphComponentDirectedEdge, GraphComponentEdge, GraphComponentFilterEdge, GraphComponentLabelNode,
@@ -36,7 +37,7 @@ export default class GraphComponent extends React.Component<Props, ComponentStat
     })();
 
     private force: Simulation<GraphComponentNode, GraphComponentEdge>;
-    private id: number;
+    private readonly id: number;
 
     private static getLinkDistance(edge: GraphComponentEdge): number {
         const {getLabeled, getLong} =
@@ -308,7 +309,7 @@ export default class GraphComponent extends React.Component<Props, ComponentStat
     private startForceSimulation() {
         this.force = forceSimulation(this.state.nodes)
             .force('charge',
-                   forceManyBody()
+                   forceManyBodyReuse()
                        .strength(settings.layout.manyBodyForceStrength)
             )
             .force('link',

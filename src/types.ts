@@ -32,14 +32,6 @@ export class Parse {
     }
 }
 
-export function decodeType(type: string): string {
-    const index = type.lastIndexOf('.');
-    if (index < 0) {
-        return type;
-    }
-    return type.substring(index + 1);
-}
-
 export class Token {
     readonly lemma: string;
     readonly pennTag: string;
@@ -58,7 +50,7 @@ export class Token {
 
 function representsToken(json: any): boolean {
     return typeof json === 'object'
-        && decodeType(json.$type) === 'Token';
+      && json.type === 'token';
 }
 
 export type Tree = TreeNode | TreeLeaf;
@@ -75,12 +67,13 @@ export class TreeLeaf {
 
 export class TreeNode {
     readonly type: string;
+    readonly subtype: string;
     readonly children: Tree[];
     readonly name?: string;
 
     static decode(json: any, name?: string): TreeNode {
         const children = Object.keys(json)
-            .filter(property => property !== '$type')
+            .filter(property => property !== 'type')
             .map((property: string): Tree[] => {
                 const value = json[property];
                 if (Array.isArray(value)) {
@@ -114,12 +107,12 @@ export class TreeNode {
             })
             .reduce((a, b) => a.concat(b), []);
 
-        const type = decodeType(json.$type);
-        return new TreeNode(type, children, name);
+        return new TreeNode(json.type, json.subtype, children, name);
     }
 
-    constructor(type: string, children: Tree[], name?: string) {
+    constructor(type: string, subtype: string, children: Tree[], name?: string) {
         this.type = type;
+        this.subtype = subtype;
         this.children = children;
         this.name = name;
     }
@@ -164,22 +157,22 @@ abstract class GraphValue {
 }
 
 export class GraphNode extends GraphValue {
+    readonly subtype: string;
     readonly label: GraphNodeLabel;
     readonly edge?: GraphEdge;
     readonly filter?: GraphFilter;
-    readonly aggregates: GraphAggregateFunction[];
     readonly order?: GraphOrder;
 
     static decode(json: any): GraphNode {
-        const _type = decodeType(json.$type);
         const label = GraphNodeLabel.decode(json.label);
         const edge = json.edge && GraphEdge.decode(json.edge);
         const filter = json.filter && GraphFilter.decode(json.filter);
-        return new GraphNode(_type, label, edge, filter);
+        return new GraphNode(json.type, json.subtype, label, edge, filter);
     }
 
-    constructor(_type: string, label: GraphNodeLabel, edge?: GraphEdge, filter?: GraphFilter) {
+    constructor(_type: string, subtype: string, label: GraphNodeLabel, edge?: GraphEdge, filter?: GraphFilter) {
         super(_type);
+        this.subtype = subtype;
         this.label = label;
         this.edge = edge;
         this.filter = filter;
@@ -189,9 +182,11 @@ export class GraphNode extends GraphValue {
 export abstract class GraphNodeLabel extends GraphValue {
 
     static decode(json: any): GraphNodeLabel {
-        const _type = decodeType(json.$type);
-        const constructor = graphNodeLabelConstructors[_type];
-        return new constructor(json, _type);
+        const constructor = graphNodeLabelConstructors[json.type];
+        if (!constructor) {
+            throw new Error(`Missing constructor for graph node label ${json.type}`)
+        }
+        return new constructor(json, json.type, json.subtype);
     }
 }
 
@@ -209,57 +204,41 @@ export class GraphItemLabel extends GraphNodeLabel {
 
     constructor(json: any, _type: string) {
         super(_type);
-        this.item = Item.decode(json.item);
+        this.item = Item.decode(json);
     }
 }
 
 export class GraphValueLabel extends GraphNodeLabel {
     readonly value: string;
+    readonly subtype: string;
 
-    constructor(json: any, _type: string) {
+    constructor(json: any, _type: string, subtype: string) {
         super(_type);
+        this.subtype = subtype;
         this.value = json.value;
-    }
-}
-
-export class GraphNumberLabel extends GraphNodeLabel {
-    readonly value: number;
-
-    constructor(json: any, _type: string) {
-        super(_type);
-        this.value = json.value;
-    }
-}
-
-export class GraphTemporalLabel extends GraphNodeLabel {
-    readonly temporal: any;
-
-    constructor(json: any, _type: string) {
-        super(_type);
-        this.temporal = json.temporal;
     }
 }
 
 interface GraphNodeLabelConstructor {
-    new(json: any, _type: string): GraphNodeLabel;
+    new(json: any, _type: string, subtype?: string): GraphNodeLabel;
 }
 
 const graphNodeLabelConstructors: {
     [type: string]: GraphNodeLabelConstructor
 } = {
-    'VarLabel': GraphVarLabel,
-    'ItemLabel': GraphItemLabel,
-    'ValueLabel': GraphValueLabel,
-    'NumberLabel': GraphNumberLabel,
-    'TemporalLabel': GraphTemporalLabel,
+    'variable': GraphVarLabel,
+    'item': GraphItemLabel,
+    'value': GraphValueLabel,
 };
 
 export abstract class GraphEdgeLabel extends GraphValue {
 
     static decode(json: any): GraphEdgeLabel {
-        const _type = decodeType(json.$type);
-        const constructor = graphEdgeLabelConstructors[_type];
-        return new constructor(json, _type);
+        const constructor = graphEdgeLabelConstructors[json.type];
+        if (!constructor) {
+            throw new Error(`Missing constructor for graph edge label ${json.type}`)
+        }
+        return new constructor(json, json.type);
     }
 }
 
@@ -268,26 +247,16 @@ export class GraphPropertyLabel extends GraphEdgeLabel {
 
     constructor(json: any, _type: string) {
         super(_type);
-        this.property = Property.decode(json.property);
+        this.property = Property.decode(json);
     }
 }
 
-export class GraphNameLabel extends GraphEdgeLabel {
-
-    private static instance = Object.create(GraphNameLabel.prototype);
-
-    constructor(json: any, _type: string) {
-        super(_type);
-        return GraphNameLabel.instance;
-    }
-}
-
-export class GraphYearLabel extends GraphEdgeLabel {
-    private static instance = Object.create(GraphYearLabel.prototype);
+export class GraphOtherLabel extends GraphEdgeLabel {
+    readonly name: string;
 
     constructor(json: any, _type: string) {
         super(_type);
-        return GraphYearLabel.instance;
+        this.name = json.name;
     }
 }
 
@@ -298,17 +267,18 @@ interface GraphEdgeLabelConstructor {
 const graphEdgeLabelConstructors: {
     [type: string]: GraphEdgeLabelConstructor
 } = {
-    'PropertyLabel': GraphPropertyLabel,
-    'NameLabel$': GraphNameLabel,
-    'YearLabel$': GraphYearLabel,
+    'property': GraphPropertyLabel,
+    'other': GraphOtherLabel,
 };
 
 export abstract class GraphEdge extends GraphValue {
 
     static decode(json: any): GraphEdge {
-        const _type = decodeType(json.$type);
-        const constructor = graphEdgeConstructors[_type];
-        return new constructor(json, _type);
+        const constructor = graphEdgeConstructors[json.subtype];
+        if (!constructor) {
+            throw new Error(`Missing constructor for graph edge ${json.subtype}`)
+        }
+        return new constructor(json, json.type);
     }
 }
 
@@ -361,18 +331,20 @@ interface GraphEdgeConstructor {
 const graphEdgeConstructors: {
     [type: string]: GraphEdgeConstructor
 } = {
-    'InEdge': GraphInEdge,
-    'OutEdge': GraphOutEdge,
-    'ConjunctionEdge': GraphConjunctionEdge,
-    'DisjunctionEdge': GraphDisjunctionEdge,
+    'incoming': GraphInEdge,
+    'outgoing': GraphOutEdge,
+    'conjunction': GraphConjunctionEdge,
+    'disjunction': GraphDisjunctionEdge,
 };
 
 export abstract class GraphFilter extends GraphValue {
 
     static decode(json: any): GraphEdge {
-        const _type = decodeType(json.$type);
-        const constructor = filterConstructors[_type];
-        return new constructor(json, _type);
+        const constructor = filterConstructors[json.type];
+        if (!constructor) {
+            throw new Error(`Missing constructor for graph filter ${json.type}`)
+        }
+        return new constructor(json, json.type);
     }
 }
 
@@ -420,10 +392,10 @@ interface GraphFilterConstructor {
 const filterConstructors: {
     [type: string]: GraphFilterConstructor
 } = {
-    'ConjunctionFilter': GraphConjunctionFilter,
-    'EqualsFilter': GraphEqualsFilter,
-    'LessThanFilter': GraphLessThanFilter,
-    'GreaterThanFilter': GraphGreaterThanFilter,
+    'conjunction': GraphConjunctionFilter,
+    'equals': GraphEqualsFilter,
+    'less-than': GraphLessThanFilter,
+    'greater-than': GraphGreaterThanFilter,
 };
 
 export abstract class GraphAggregateFunction extends GraphValue {

@@ -36,9 +36,11 @@ storiesOf('Tokens', module)
 storiesOf('Tree', module)
     .add('simple', () => {
         const root =
-            new TreeNode('ListQuestion',
+            new TreeNode('list-question',
+                         'other',
                          [
-                             new TreeNode('NamedQuery',
+                             new TreeNode('query',
+                                          'named',
                                           [
                                               new TreeLeaf('name',
                                                            [
@@ -53,9 +55,9 @@ storiesOf('Tree', module)
     })
     .add('complex', () => {
         const root =
-            new TreeNode('ListQuestion', [
-                new TreeNode('QueryWithProperty', [
-                                 new TreeNode('NamedQuery', [
+            new TreeNode('list-question', 'other', [
+                new TreeNode('query', 'with-property', [
+                                 new TreeNode('query', 'named', [
                                                   new TreeLeaf('name', [
                                                       new Token('president',
                                                                 'NNS',
@@ -63,19 +65,19 @@ storiesOf('Tree', module)
                                                   ])
                                               ],
                                               'query'),
-                                 new TreeNode('PropertyWithFilter', [
+                                 new TreeNode('property', 'with-filter', [
                                                   new TreeLeaf('name', [
                                                       new Token('bear',
                                                                 'VBN',
                                                                 'born')
                                                   ]),
-                                                  new TreeNode('FilterWithModifier', [
+                                                  new TreeNode('filter', 'with-modifier', [
                                                                    new TreeLeaf('modifier', [
                                                                        new Token('before',
                                                                                  'IN',
                                                                                  'before')
                                                                    ]),
-                                                                   new TreeNode('Number', [
+                                                                   new TreeNode('value', 'number', [
                                                                                     new TreeLeaf('number', [
                                                                                         new Token('1900',
                                                                                                   'CD',
@@ -171,7 +173,7 @@ class GraphComponentWrapper extends React.Component<{}, {first: boolean}> {
 storiesOf('Graph', module)
     .add('ComponentLabelNode', () => {
         const nodeLabel =
-            new GraphItemLabel({item: {id: 30461, name: 'president'}}, 'ItemLabel');
+            new GraphItemLabel({id: 30461, name: 'president'}, 'item');
         const componentNode = GraphComponentLabelNode.fromGraphNodeLabel(nodeLabel);
         return (
             <code style={{ whiteSpace: 'pre'}}>
@@ -181,11 +183,11 @@ storiesOf('Graph', module)
     })
     .add('ComponentDirectedEdge', () => {
         const edgeLabel =
-            new GraphPropertyLabel({property: {id: 31, name: 'is instance of'}}, 'PropertyLabel');
-        const sourceNodeLabel = new GraphVarLabel({id: 0}, 'VarLabel');
+            new GraphPropertyLabel({id: 31, name: 'is instance of'}, 'property');
+        const sourceNodeLabel = new GraphVarLabel({id: 0}, 'variable');
         const sourceComponentNode =
             GraphComponentLabelNode.fromGraphNodeLabel(sourceNodeLabel) as GraphComponentLabelNode;
-        const targetNodeLabel = new GraphItemLabel({item: {id: 6256, name: 'country'}}, 'ItemLabel');
+        const targetNodeLabel = new GraphItemLabel({id: 6256, name: 'country'}, 'item');
         const targetComponentNode =
             GraphComponentLabelNode.fromGraphNodeLabel(targetNodeLabel) as GraphComponentLabelNode;
         const componentNode =

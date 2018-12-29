@@ -1,60 +1,49 @@
 export const graph1 = {
-    '$type': 'com.turbolent.questionCompiler.graph.Node',
-    'aggregates': [],
+    'type': 'node',
     'edge': {
-        '$type': 'com.turbolent.questionCompiler.graph.ConjunctionEdge',
+        'type': 'edge',
+        'subtype': 'conjunction',
         'edges': [
             {
-                '$type': 'com.turbolent.questionCompiler.graph.OutEdge',
+                'type': 'edge',
+                'subtype': 'outgoing',
                 'label': {
-                    '$type': 'com.turbolent.wikidataOntology.PropertyLabel',
-                    'property': {
-                        '$type': 'com.turbolent.wikidataOntology.Property',
-                        'id': 39,
-                        'name': 'holds position'
-                    }
+                    'type': 'property',
+                    'id': 39,
+                    'name': 'holds position'
                 },
                 'target': {
-                    '$type': 'com.turbolent.questionCompiler.graph.Node',
-                    'aggregates': [],
+                    'type': 'node',
                     'label': {
-                        '$type': 'com.turbolent.wikidataOntology.ItemLabel',
-                        'item': {
-                            '$type': 'com.turbolent.wikidataOntology.Item',
-                            'id': 30461,
-                            'name': 'president'
-                        }
+                        'type': 'item',
+                        'id': 30461,
+                        'name': 'president'
                     }
                 }
             },
             {
-                '$type': 'com.turbolent.questionCompiler.graph.OutEdge',
+                'type': 'edge',
+                'subtype': 'outgoing',
                 'label': {
-                    '$type': 'com.turbolent.wikidataOntology.PropertyLabel',
-                    'property': {
-                        '$type': 'com.turbolent.wikidataOntology.Property',
-                        'id': 569,
-                        'name': 'has date of birth'
-                    }
+                    'type': 'property',
+                    'id': 569,
+                    'name': 'has date of birth'
                 },
                 'target': {
-                    '$type': 'com.turbolent.questionCompiler.graph.Node',
-                    'aggregates': [],
+                    'type': 'node',
                     'filter': {
-                        '$type': 'com.turbolent.questionCompiler.graph.LessThanFilter',
+                        'type': 'less-than',
                         'node': {
-                            '$type': 'com.turbolent.questionCompiler.graph.Node',
-                            'aggregates': [],
+                            'type': 'node',
                             'label': {
-                                '$type': 'com.turbolent.wikidataOntology.TemporalLabel',
-                                'temporal': {
-                                    '$type': 'java.time.Year'
-                                }
+                                'type': 'value',
+                                'subtype': 'year',
+                                'value': 1900
                             }
                         }
                     },
                     'label': {
-                        '$type': 'com.turbolent.wikidataOntology.VarLabel',
+                        'type': 'variable',
                         'id': 2
                     }
                 }
@@ -62,69 +51,62 @@ export const graph1 = {
         ]
     },
     'label': {
-        '$type': 'com.turbolent.wikidataOntology.VarLabel',
+        'type': 'variable',
         'id': 1
     }
 };
 
 export const graph2 = {
-    '$type': 'com.turbolent.questionCompiler.graph.Node',
-    'aggregates': [],
+    'type': 'node',
     'edge': {
-        '$type': 'com.turbolent.questionCompiler.graph.ConjunctionEdge',
+        'type': 'edge',
+        'subtype': 'conjunction',
         'edges': [
             {
-                '$type': 'com.turbolent.questionCompiler.graph.OutEdge',
+                'type': 'edge',
+                'subtype': 'outgoing',
                 'label': {
-                    '$type': 'com.turbolent.wikidataOntology.PropertyLabel',
-                    'property': {
-                        '$type': 'com.turbolent.wikidataOntology.Property',
-                        'id': 31,
-                        'name': 'is instance of'
-                    }
+                    'type': 'property',
+                    'id': 31,
+                    'name': 'is instance of'
                 },
                 'target': {
-                    '$type': 'com.turbolent.questionCompiler.graph.Node',
-                    'aggregates': [],
+                    'type': 'node',
                     'label': {
-                        '$type': 'com.turbolent.wikidataOntology.ItemLabel',
-                        'item': {
-                            '$type': 'com.turbolent.wikidataOntology.Item',
-                            'id': 571,
-                            'name': 'book'
-                        }
+                        'type': 'item',
+                        'id': 571,
+                        'name': 'book'
                     }
                 }
             },
             {
-                '$type': 'com.turbolent.questionCompiler.graph.OutEdge',
+                'type': 'edge',
+                'subtype': 'outgoing',
                 'label': {
-                    '$type': 'com.turbolent.wikidataOntology.PropertyLabel',
-                    'property': {
-                        '$type': 'com.turbolent.wikidataOntology.Property',
-                        'id': 50,
-                        'name': 'has author'
-                    }
+                    'type': 'property',
+                    'id': 50,
+                    'name': 'has author'
                 },
                 'target': {
-                    '$type': 'com.turbolent.questionCompiler.graph.Node',
-                    'aggregates': [],
+                    'type': 'node',
                     'edge': {
-                        '$type': 'com.turbolent.questionCompiler.graph.OutEdge',
+                        'type': 'edge',
+                        'subtype': 'outgoing',
                         'label': {
-                            '$type': 'com.turbolent.wikidataOntology.NameLabel$'
+                            'type': 'other',
+                            'name': 'name'
                         },
                         'target': {
-                            '$type': 'com.turbolent.questionCompiler.graph.Node',
-                            'aggregates': [],
+                            'type': 'node',
                             'label': {
-                                '$type': 'com.turbolent.wikidataOntology.ValueLabel',
+                                'type': 'value',
+                                'subtype': 'string',
                                 'value': 'George Orwell'
                             }
                         }
                     },
                     'label': {
-                        '$type': 'com.turbolent.wikidataOntology.VarLabel',
+                        'type': 'variable',
                         'id': 2
                     }
                 }
@@ -132,7 +114,7 @@ export const graph2 = {
         ]
     },
     'label': {
-        '$type': 'com.turbolent.wikidataOntology.VarLabel',
+        'type': 'variable',
         'id': 1
     }
 };

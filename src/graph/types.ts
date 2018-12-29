@@ -1,11 +1,11 @@
 import {
-    GraphConjunctionEdge, GraphDisjunctionEdge,
-    GraphEdge,
-    GraphEdgeLabel, GraphFilter, GraphGreaterThanFilter, GraphInEdge,
-    GraphItemLabel, GraphLessThanFilter, GraphNameLabel, GraphNode, GraphNodeLabel, GraphNumberLabel, GraphOutEdge,
-    GraphPropertyLabel,
-    GraphTemporalLabel, GraphValueLabel, GraphVarLabel, GraphYearLabel
-} from '../types';
+  GraphConjunctionEdge, GraphDisjunctionEdge,
+  GraphEdge,
+  GraphEdgeLabel, GraphFilter, GraphGreaterThanFilter, GraphInEdge,
+  GraphItemLabel, GraphLessThanFilter, GraphNode, GraphNodeLabel, GraphOtherLabel, GraphOutEdge,
+  GraphPropertyLabel,
+  GraphValueLabel, GraphVarLabel
+} from '../types'
 import { Wikidata } from '../wikidata';
 
 type GetterFunction<T, U> = (value: T, ...args: any[]) => U;
@@ -54,12 +54,14 @@ export class GraphComponentLabelNode extends GraphComponentNode {
             [
                 [GraphVarLabel, (label: GraphVarLabel) => `?${label.id}`],
                 [GraphItemLabel, (label: GraphItemLabel) => label.item.name],
-                [GraphValueLabel, (label: GraphValueLabel) => `"${label.value}"`],
-                [GraphNumberLabel, (label: GraphNumberLabel) => label.value + ''],
-                [GraphTemporalLabel, (label: GraphTemporalLabel) => {
-                    // TODO:
-                    return label.temporal + '';
-                }]
+                [GraphValueLabel, (label: GraphValueLabel) => {
+                  switch (label.subtype) {
+                    case 'string':
+                      return `"${label.value}"`;
+                    default:
+                      return label.value + '';
+                  }
+                }],
             ]
         );
 
@@ -119,9 +121,8 @@ export class GraphComponentDirectedEdge extends GraphComponentEdge {
     private static readonly textGetter =
         makeGetter<GraphEdgeLabel, string>(
             [
-                [GraphPropertyLabel, (label: GraphPropertyLabel) => label.property.name],
-                [GraphNameLabel, () => 'name'],
-                [GraphYearLabel, () => 'year']
+              [GraphPropertyLabel, (label: GraphPropertyLabel) => label.property.name],
+              [GraphOtherLabel, (label: GraphOtherLabel) => label.name],
             ]
         );
 
