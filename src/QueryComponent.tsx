@@ -6,15 +6,15 @@ import 'codemirror/mode/sparql/sparql.js';
 import './QueryComponent.css';
 import * as React from 'react';
 import { EditorConfiguration } from 'codemirror';
-import OpenIcon from 'material-ui-icons/OpenInNew';
-import IconButton from 'material-ui/IconButton';
-import Tooltip from 'material-ui/Tooltip';
+import OpenIcon from '@material-ui/icons/OpenInNew';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 
 interface Props {
     readonly query: string;
 }
 
-export default class QueryComponent extends React.Component<Props, {}> {
+export default class QueryComponent extends React.Component<Props> {
     private static options: EditorConfiguration = {
         mode: 'application/sparql-query',
         readOnly: 'nocursor',

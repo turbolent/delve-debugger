@@ -40,7 +40,7 @@ interface Props {
     readonly children: (Tree | Token)[];
 }
 
-class SubtreeComponent extends React.Component<Props, {}> {
+class SubtreeComponent extends React.Component<Props> {
 
     static renderTreeNode(node: TreeNode, key: number): ReactNode {
         return (

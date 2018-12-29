@@ -16,17 +16,10 @@ module.exports = {
         rules: [
             {
                 test: /\.tsx?$/,
-                loader: 'ts-loader',
+                loader: require.resolve('awesome-typescript-loader'),
                 include: [
                     SRC_PATH,
                     STORIES_PATH
-                ]
-            },
-            {
-                test: /\.css$/,
-                use: [
-                    { loader: 'style-loader' },
-                    { loader: 'css-loader' }
                 ]
             }
         ]

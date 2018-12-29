@@ -2,8 +2,9 @@ import * as React from 'react';
 import { ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { State } from './state';
-import Typography from 'material-ui/Typography';
-import Card, { CardContent } from 'material-ui/Card';
+import Typography from '@material-ui/core/Typography';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 import './SectionComponent.css';
 
 interface StateProps {
@@ -26,7 +27,7 @@ const SectionComponent = ({title, show, children}: Props) => {
     return (
         <Card className="Section">
             <CardContent>
-                <Typography type="headline" component="h2">
+                <Typography variant="h2">
                     {title}
                 </Typography>
                 {children}
@@ -41,7 +42,7 @@ const mapStateToProps = (state: State, ownProps: OwnProps): StateProps => {
             return null;
         }
         return currentState[property];
-    },                                        state);
+    }, state);
 
     return {
         show: reducedState !== null && reducedState !== undefined

@@ -2,10 +2,10 @@ import * as React from 'react';
 import './App.css';
 import Form from './FormComponent';
 import Body from './BodyComponent';
-import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
-import Reboot from 'material-ui/Reboot';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
 
 const theme = createMuiTheme({
                                  typography: {
@@ -25,7 +25,7 @@ class App extends React.Component {
     render() {
         return (
             <MuiThemeProvider theme={theme}>
-                <Reboot/>
+                <CssBaseline/>
                 <div className="App">
                     <AppBar position="fixed">
                         <Toolbar>

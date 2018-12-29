@@ -1,10 +1,11 @@
-import { connect, Dispatch } from 'react-redux';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { parseQuestion, setQuestion } from './actions';
 import * as React from 'react';
 import { State } from './state';
 import './FormComponent.css';
-import IconButton from 'material-ui/IconButton';
-import BugReportIcon from 'material-ui-icons/BugReport';
+import IconButton from '@material-ui/core/IconButton';
+import BugReportIcon from '@material-ui/icons/BugReport';
 
 interface DispatchProps {
     readonly request: (question: string) => void;
@@ -18,7 +19,7 @@ interface StateProps {
 
 type Props = StateProps & DispatchProps;
 
-class FormComponent extends React.Component<Props, {}> {
+class FormComponent extends React.Component<Props> {
 
     readonly handleChange = (event: React.FormEvent<HTMLTextAreaElement | HTMLInputElement>) => {
         const target = event.target as HTMLInputElement;
