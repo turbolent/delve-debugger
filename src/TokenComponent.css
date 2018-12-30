@@ -1,20 +1,20 @@
-@import 'common.css';
+@import "common.css";
 
 .Token {
-    border: var(--common-border);
-    background: #eee;
-    margin: 0 1rem 1rem 0;
-    display: flex;
-    flex-direction: column;
-    font-weight: 500;
-    text-align: center;
-    font-size: 0.8rem;
+  border: var(--common-border);
+  background: #eee;
+  margin: 0 1rem 1rem 0;
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  text-align: center;
+  font-size: 0.8rem;
 }
 
 .Token > * {
-    padding: 0.4rem 0.6rem;
+  padding: 0.4rem 0.6rem;
 }
 
 .Token > div:first-child {
-    border-bottom: var(--common-border);
+  border-bottom: var(--common-border);
 }

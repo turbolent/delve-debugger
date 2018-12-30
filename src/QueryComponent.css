@@ -1,16 +1,16 @@
-@import 'common.css';
+@import "common.css";
 
 .QueryText {
-    font-family: monospace;
-    display: inline-block;
-    border: var(--common-border);
-    padding: 0.2rem 0.4rem;
+  font-family: monospace;
+  display: inline-block;
+  border: var(--common-border);
+  padding: 0.2rem 0.4rem;
 }
 
 .QueryActions {
-    margin: 0.6rem 0 1.5rem;
+  margin: 0.6rem 0 1.5rem;
 }
 
 .cm-s-neo .CodeMirror-linenumber {
-    color: #b3b4b7 !important;
+  color: #b3b4b7 !important;
 }
