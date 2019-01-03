@@ -27,7 +27,7 @@ const SectionComponent = ({ title, show, children }: Props) => {
   return (
     <Card className="Section">
       <CardContent>
-        <Typography variant="h2">{title}</Typography>
+        <Typography variant="h5">{title}</Typography>
         {children}
       </CardContent>
     </Card>

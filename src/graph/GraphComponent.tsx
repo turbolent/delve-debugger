@@ -48,7 +48,7 @@ export default class GraphComponent extends React.Component<
     return () => nextId++;
   })();
 
-  private force: Simulation<GraphComponentNode, GraphComponentEdge>;
+  private force?: Simulation<GraphComponentNode, GraphComponentEdge>;
   private readonly id: number;
 
   private static getLinkDistance(edge: GraphComponentEdge): number {
@@ -347,7 +347,7 @@ export default class GraphComponent extends React.Component<
       )
       .force(
         "link",
-        forceLink()
+        forceLink<{}, GraphComponentEdge>()
           .distance(GraphComponent.getLinkDistance)
           .links(this.state.links)
       )
@@ -367,6 +367,10 @@ export default class GraphComponent extends React.Component<
 
   private forwardForceSimulation(percentage: number = 1) {
     const { force } = this;
+    if (!force) {
+      return;
+    }
+
     // from https://bl.ocks.org/mbostock/01ab2e85e8727d6529d20391c0fd9a16
     const n =
       Math.ceil(Math.log(force.alphaMin()) / Math.log(1 - force.alphaDecay())) *
@@ -377,12 +381,20 @@ export default class GraphComponent extends React.Component<
   }
 
   private stopForceSimulation() {
-    this.force.stop();
+    const { force } = this;
+    if (!force) {
+      return;
+    }
+    force.stop();
   }
 
   private relayout = () => {
-    this.force.alpha(settings.layout.relayoutAlpha);
-    this.force.restart();
+    const { force } = this;
+    if (!force) {
+      return;
+    }
+    force.alpha(settings.layout.relayoutAlpha);
+    force.restart();
   };
 
   private applyDrag(container: SVGSVGElement | null) {
@@ -393,7 +405,7 @@ export default class GraphComponent extends React.Component<
     const component = this;
 
     function dragStarted(d: { y: number; x: number; fy: number; fx: number }) {
-      if (!d3Selection.event.active) {
+      if (!d3Selection.event.active && component.force) {
         component.force.alphaTarget(settings.layout.dragAlphaTarget).restart();
       }
       d.fx = d.x;
@@ -406,14 +418,19 @@ export default class GraphComponent extends React.Component<
     }
 
     function dragEnded(d: { fx: number | null; fy: number | null }) {
-      if (!d3Selection.event.active) {
+      if (!d3Selection.event.active && component.force) {
         component.force.alphaTarget(0);
       }
       d.fx = null;
       d.fy = null;
     }
 
-    const dragBehaviour = drag()
+    type AbsolutePosition = { fx: number; fy: number };
+
+    const dragBehaviour = drag<
+      SVGElement,
+      GraphComponentNode & AbsolutePosition
+    >()
       .on("start", dragStarted)
       .on("drag", dragged)
       .on("end", dragEnded);
@@ -421,6 +438,7 @@ export default class GraphComponent extends React.Component<
     select(container)
       .selectAll<SVGGElement, GraphComponentNode>(".GraphNode")
       .data(this.state.nodes)
+      // @ts-ignore
       .call(dragBehaviour);
   }
 
@@ -568,7 +586,7 @@ export default class GraphComponent extends React.Component<
       component.setState({ transform });
     }
 
-    const zoomBehaviour = zoom()
+    const zoomBehaviour = zoom<SVGRectElement, {}>()
       .scaleExtent(settings.layout.scaleExtent)
       .on("zoom", zoomed);
     select(rect).call(zoomBehaviour);

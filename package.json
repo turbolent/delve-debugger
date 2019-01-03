@@ -29,11 +29,11 @@
     "typescript": "^3.2.2"
   },
   "scripts": {
-    "start": "./node_modules/react-scripts-ts/bin/react-scripts-ts.js start",
-    "build": "./node_modules/react-scripts-ts/bin/react-scripts-ts.js build",
-    "test": "CI=true ./node_modules/react-scripts-ts/bin/react-scripts-ts.js test --env=jsdom",
-    "watch-test": "./node_modules/react-scripts-ts/bin/react-scripts-ts.js test --env=jsdom",
-    "eject": "./node_modules/react-scripts-ts/bin/react-scripts-ts.js eject",
+    "start": "./node_modules/react-scripts/bin/react-scripts.js start",
+    "build": "./node_modules/react-scripts/bin/react-scripts.js build",
+    "test": "CI=true ./node_modules/react-scripts/bin/react-scripts.js test --env=jsdom",
+    "watch-test": "./node_modules/react-scripts/bin/react-scripts.js test --env=jsdom",
+    "eject": "./node_modules/react-scripts/bin/react-scripts.js eject",
     "lint": "./node_modules/tslint/bin/tslint -p .",
     "fix": "./node_modules/tslint/bin/tslint -p . --fix",
     "storybook": "start-storybook -p 6006",
@@ -69,12 +69,10 @@
     "redux-devtools-extension": "^2.13.7",
     "ts-jest": "^23.10.5"
   },
-  "proxy": {
-    "/api": {
-      "target": "http://localhost:8080/",
-      "pathRewrite": {
-        "^/api": ""
-      }
-    }
-  }
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

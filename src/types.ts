@@ -214,7 +214,7 @@ export class GraphValueLabel extends GraphNodeLabel {
 }
 
 interface GraphNodeLabelConstructor {
-  new (json: any, _type: string, subtype?: string): GraphNodeLabel;
+  new (json: any, _type: string, subtype: string): GraphNodeLabel;
 }
 
 const graphNodeLabelConstructors: {
