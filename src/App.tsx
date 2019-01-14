@@ -9,6 +9,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 
 const theme = createMuiTheme({
   typography: {
+    useNextVariants: true,
     fontFamily: "Roboto, sans-serif"
   },
   palette: {
