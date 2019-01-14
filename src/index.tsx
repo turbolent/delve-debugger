@@ -5,8 +5,9 @@ import registerServiceWorker from "./registerServiceWorker";
 import "./index.css";
 import { Provider } from "react-redux";
 import createStore from "./store";
-import { parseQuestion, setQuestion } from "./actions";
-import { getSavedQuestion } from "./history";
+import { parseQuestion, setQuestion, parseActionCreator } from "./actions";
+import { getSavedState } from "./history";
+import { Parse } from "./types";
 
 const store = createStore();
 const root = document.getElementById("root") as HTMLElement;
@@ -21,12 +22,19 @@ ReactDOM.render(
 registerServiceWorker();
 
 function loadState(state: any) {
-  const question = (state && state.question) || getSavedQuestion();
-  if (!question) {
-    return;
+  const { question: savedQuestion, parse: savedParse } = getSavedState();
+
+  const question = (state && state.question) || savedQuestion;
+  if (question) {
+    store.dispatch(setQuestion(question));
   }
-  store.dispatch(setQuestion(question));
-  store.dispatch(parseQuestion(question, false));
+
+  if (savedParse) {
+    const parse = Parse.decode(savedParse);
+    store.dispatch(parseActionCreator.succeeded(parse));
+  } else if (question) {
+    store.dispatch(parseQuestion(question, false));
+  }
 }
 
 window.addEventListener("load", () => {

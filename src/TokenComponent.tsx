@@ -18,7 +18,7 @@ const color = (tag: string): string => {
 };
 
 export default ({ token }: Props) => {
-  const { pennTag: tag } = token;
+  const { tag } = token;
   return (
     <div className="Token" title={token.lemma}>
       <div>{token.word}</div>

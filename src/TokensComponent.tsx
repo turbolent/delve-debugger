@@ -18,7 +18,7 @@ export const TokensComponent = ({ tokens }: StateProps) => (
 );
 
 const mapStateToProps = (s: State): StateProps => ({
-  tokens: s.parse ? s.parse.tokens : []
+  tokens: (s.parse && s.parse.tokens) || []
 });
 
 export default connect(mapStateToProps)(TokensComponent);

@@ -4,7 +4,7 @@ import {
   parseActionCreator,
   setQuestionActionCreator
 } from "./actions";
-import { encodeQuestion, getSavedQuestion } from "./history";
+import { encodeSavedState, getSavedState } from "./history";
 
 export function reducer(state: State, action: Action<{}>): State {
   switch (action.type) {
@@ -51,10 +51,10 @@ export function reducer(state: State, action: Action<{}>): State {
 }
 
 function saveQuestion(question: string) {
-  const url = encodeQuestion(question);
-  const currentURL = encodeQuestion(getSavedQuestion());
-  if (url === currentURL) {
+  const newURL = encodeSavedState(question);
+  const { question: currentQuestion } = getSavedState();
+  if (currentQuestion && newURL === encodeSavedState(currentQuestion)) {
     return;
   }
-  history.pushState({ question }, document.title, url);
+  history.pushState({ question }, document.title, newURL);
 }

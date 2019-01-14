@@ -1,12 +1,24 @@
-export function encodeQuestion(question: string) {
-  return "#" + encodeURIComponent(question.trim());
+import { Parse } from "./types";
+
+interface SavedState {
+  question?: string;
+  parse?: Parse;
 }
 
-export function getSavedQuestion(): string {
+export function encodeSavedState(question: string) {
+  const savedState: SavedState = { question: question.trim() };
+  return "#" + btoa(JSON.stringify(savedState));
+}
+
+export function getSavedState(): SavedState {
   const hash = window.location.hash;
   if (!hash.length) {
-    return "";
+    return {};
   }
 
-  return decodeURIComponent(hash.substring(1));
+  try {
+    return JSON.parse(atob(hash.substring(1)));
+  } catch (_) {
+    return {};
+  }
 }

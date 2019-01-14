@@ -1,5 +1,5 @@
 export class Parse {
-  readonly tokens: Token[];
+  readonly tokens?: Token[];
   readonly tree?: TreeNode;
   readonly queries?: string[];
   readonly nodes?: GraphNode[];
@@ -7,8 +7,8 @@ export class Parse {
 
   static decode(json: any): Parse {
     return new Parse(
-      json.tokens.map(Token.decode),
-      json.question && TreeNode.decode(json.question),
+      json.tokens && json.tokens.map(Token.decode),
+      json.tree && TreeNode.decode(json.tree),
       json.queries,
       json.nodes &&
         json.nodes.map((nodeJSON: any) => GraphNode.decode(nodeJSON)),
@@ -33,16 +33,16 @@ export class Parse {
 
 export class Token {
   readonly lemma: string;
-  readonly pennTag: string;
+  readonly tag: string;
   readonly word: string;
 
   static decode(json: any): Token {
-    return new Token(json.lemma, json.pennTag, json.word);
+    return new Token(json.lemma, json.tag, json.word);
   }
 
-  constructor(lemma: string, pennTag: string, word: string) {
+  constructor(lemma: string, tag: string, word: string) {
     this.lemma = lemma;
-    this.pennTag = pennTag;
+    this.tag = tag;
     this.word = word;
   }
 }
@@ -69,9 +69,16 @@ export class TreeNode {
   readonly children: Tree[];
   readonly name?: string;
 
+  private static ignoredProperties = new Set(["type", "subtype"]);
+
+  private static isValidProperty(property: string) {
+    return !TreeNode.ignoredProperties.has(property);
+  }
+
   static decode(json: any, name?: string): TreeNode {
+    debugger;
     const children = Object.keys(json)
-      .filter(property => property !== "type")
+      .filter(TreeNode.isValidProperty)
       .map(
         (property: string): Tree[] => {
           const value = json[property];
@@ -109,30 +116,30 @@ export class TreeNode {
 }
 
 export class Item {
-  readonly id: number;
   readonly name: string;
+  readonly url?: string;
 
   static decode(json: any): Item {
-    return new Item(json.id, json.name);
+    return new Item(json.name, json.url);
   }
 
-  constructor(id: number, name: string) {
-    this.id = id;
+  constructor(name: string, url?: string) {
     this.name = name;
+    this.url = url;
   }
 }
 
 export class Property {
-  readonly id: number;
   readonly name: string;
+  readonly url?: string;
 
   static decode(json: any): Item {
-    return new Property(json.id, json.name);
+    return new Property(json.name, json.url);
   }
 
-  constructor(id: number, name: string) {
-    this.id = id;
+  constructor(name: string, url?: string) {
     this.name = name;
+    this.url = url;
   }
 }
 
