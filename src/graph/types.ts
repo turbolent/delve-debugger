@@ -16,7 +16,6 @@ import {
   GraphValueLabel,
   GraphVarLabel
 } from "../types";
-import { Wikidata } from "../wikidata";
 
 interface GraphComponentValue {}
 
@@ -65,7 +64,7 @@ export class GraphComponentLabelNode extends GraphComponentNode {
 
   private static getLink(nodeLabel: GraphNodeLabel): string | undefined {
     if (nodeLabel instanceof GraphItemLabel) {
-      return Wikidata.getItemURL(nodeLabel.item.id);
+      return nodeLabel.item.url;
     }
 
     return;
@@ -140,7 +139,7 @@ export class GraphComponentDirectedEdge extends GraphComponentEdge {
 
   private static getLink(edgeLabel: GraphEdgeLabel): string | undefined {
     if (edgeLabel instanceof GraphPropertyLabel) {
-      return Wikidata.getPropertyURL(edgeLabel.property.id);
+      return edgeLabel.property.url;
     }
 
     return;
