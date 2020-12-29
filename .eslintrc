@@ -9,5 +9,11 @@
   ],
   "rules": {
     "@typescript-eslint/no-this-alias": "off"
+  },
+  "ignorePatterns": ["src/setup*.js"],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
   }
 }
