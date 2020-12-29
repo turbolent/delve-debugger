@@ -1,12 +1,12 @@
-import * as React from "react";
+import * as React from "react"
 import {
   forceCenter,
   forceCollide,
   forceLink,
   forceSimulation,
-  Simulation
-} from "d3-force";
-import { forceManyBodyReuse } from "d3-force-reuse";
+  Simulation,
+} from "d3-force"
+import { forceManyBodyReuse } from "d3-force-reuse"
 import {
   GraphComponentConjunctionNode,
   GraphComponentDirectedEdge,
@@ -14,29 +14,28 @@ import {
   GraphComponentFilterEdge,
   GraphComponentLabelNode,
   GraphComponentNode,
-  GraphComponentVarLabelNode
-} from "./types";
-import settings from "./settings";
-import { HSLColor } from "d3-color";
-import "./GraphComponent.css";
-import { Key, ReactNode } from "react";
-import { select } from "d3-selection";
-import * as d3Selection from "d3-selection";
-import { drag } from "d3-drag";
-import { zoom } from "d3-zoom";
-import Button from "@material-ui/core/Button";
+  GraphComponentVarLabelNode,
+} from "./types"
+import settings from "./settings"
+import { HSLColor } from "d3-color"
+import "./GraphComponent.css"
+import { Key, ReactElement } from "react"
+import { select } from "d3-selection"
+import { D3DragEvent, drag } from "d3-drag"
+import { D3ZoomEvent, zoom } from "d3-zoom"
+import Button from "@material-ui/core/Button"
 
 interface Props {
-  nodes: GraphComponentNode[];
-  links: GraphComponentEdge[];
+  nodes: GraphComponentNode[]
+  links: GraphComponentEdge[]
 }
 
 interface ComponentState {
-  nodes: GraphComponentNode[];
-  links: GraphComponentEdge[];
-  width: number;
-  height: number;
-  transform?: string;
+  nodes: GraphComponentNode[]
+  links: GraphComponentEdge[]
+  width: number
+  height: number
+  transform?: string
 }
 
 export default class GraphComponent extends React.Component<
@@ -44,40 +43,40 @@ export default class GraphComponent extends React.Component<
   ComponentState
 > {
   private static getNextId = (() => {
-    let nextId = 0;
-    return () => nextId++;
-  })();
+    let nextId = 0
+    return () => nextId++
+  })()
 
-  private force?: Simulation<GraphComponentNode, GraphComponentEdge>;
-  private readonly id: number;
+  private force?: Simulation<GraphComponentNode, GraphComponentEdge>
+  private readonly id: number
 
   private static getLinkDistance(edge: GraphComponentEdge): number {
-    const { getLabeled, getLong } = settings.edge.distance;
+    const { getLabeled, getLong } = settings.edge.distance
 
-    const length = (edge.text && edge.text.length) || 0;
+    const length = (edge.text && edge.text.length) || 0
 
     if (
       edge instanceof GraphComponentDirectedEdge ||
       edge instanceof GraphComponentFilterEdge
     ) {
-      return getLabeled(length);
+      return getLabeled(length)
     }
 
-    return getLong();
+    return getLong()
   }
 
   private static getEdgeStroke(edge: GraphComponentEdge): HSLColor {
-    const { getDirected, getFilter, getOther } = settings.edge.color;
+    const { getDirected, getFilter, getOther } = settings.edge.color
 
     if (edge instanceof GraphComponentDirectedEdge) {
-      return getDirected();
+      return getDirected()
     }
 
     if (edge instanceof GraphComponentFilterEdge) {
-      return getFilter();
+      return getFilter()
     }
 
-    return getOther();
+    return getOther()
   }
 
   private static getLinkOffset(edge: GraphComponentEdge): [number, number] {
@@ -85,30 +84,30 @@ export default class GraphComponent extends React.Component<
       !(edge instanceof GraphComponentDirectedEdge) &&
       !(edge instanceof GraphComponentFilterEdge)
     ) {
-      return [0, 0];
+      return [0, 0]
     }
 
-    const diffX = edge.target.x - edge.source.x;
-    const diffY = edge.target.y - edge.source.y;
+    const diffX = edge.target.x - edge.source.x
+    const diffY = edge.target.y - edge.source.y
 
-    const pathLength = Math.sqrt(diffX * diffX + diffY * diffY);
+    const pathLength = Math.sqrt(diffX * diffX + diffY * diffY)
     if (!pathLength) {
-      return [0, 0];
+      return [0, 0]
     }
 
-    const offset = settings.node.radius + settings.marker.size;
+    const offset = settings.node.radius + settings.marker.size
 
-    return [(diffX * offset) / pathLength, (diffY * offset) / pathLength];
+    return [(diffX * offset) / pathLength, (diffY * offset) / pathLength]
   }
 
   private static edgePath(edge: GraphComponentEdge): string {
-    const [offsetX, offsetY] = GraphComponent.getLinkOffset(edge);
+    const [offsetX, offsetY] = GraphComponent.getLinkOffset(edge)
     return (
       "M" +
       [edge.source.x, edge.source.y].join(",") +
       "L" +
       [edge.target.x - offsetX, edge.target.y - offsetY].join(",")
-    );
+    )
   }
 
   private static getNodeFill(node: GraphComponentNode): HSLColor {
@@ -116,22 +115,22 @@ export default class GraphComponent extends React.Component<
       getRoot,
       getVariable,
       getLabel,
-      getOther
-    } = settings.node.backgroundColor;
+      getOther,
+    } = settings.node.backgroundColor
 
     if (node.isRoot) {
-      return getRoot();
+      return getRoot()
     }
 
     if (node instanceof GraphComponentVarLabelNode) {
-      return getVariable();
+      return getVariable()
     }
 
     if (node instanceof GraphComponentLabelNode) {
-      return getLabel();
+      return getLabel()
     }
 
-    return getOther();
+    return getOther()
   }
 
   private static getNodeStroke(node: GraphComponentNode): HSLColor {
@@ -139,22 +138,22 @@ export default class GraphComponent extends React.Component<
       getRoot,
       getVariable,
       getLabel,
-      getOther
-    } = settings.node.stroke.color;
+      getOther,
+    } = settings.node.stroke.color
 
     if (node.isRoot) {
-      return getRoot();
+      return getRoot()
     }
 
     if (node instanceof GraphComponentVarLabelNode) {
-      return getVariable();
+      return getVariable()
     }
 
     if (node instanceof GraphComponentLabelNode) {
-      return getLabel();
+      return getLabel()
     }
 
-    return getOther();
+    return getOther()
   }
 
   private static getNodeTextFill(node: GraphComponentNode): HSLColor {
@@ -163,68 +162,68 @@ export default class GraphComponent extends React.Component<
       getVariable,
       getConjunction,
       getLink,
-      getOther
-    } = settings.node.textColor;
+      getOther,
+    } = settings.node.textColor
 
     if (node.isRoot) {
-      return getRoot();
+      return getRoot()
     }
 
     if (node instanceof GraphComponentVarLabelNode) {
-      return getVariable();
+      return getVariable()
     }
 
     if (node instanceof GraphComponentConjunctionNode) {
-      return getConjunction();
+      return getConjunction()
     }
 
     if (node.link) {
-      return getLink();
+      return getLink()
     }
 
-    return getOther();
+    return getOther()
   }
 
   private static getNodeTextFontWeight(
     node: GraphComponentNode
   ): string | undefined {
     if (node instanceof GraphComponentLabelNode) {
-      return "bold";
+      return "bold"
     }
 
-    return;
+    return
   }
 
   private static getTextShadow(
     element: GraphComponentNode | GraphComponentEdge
   ): string {
-    const { normal, strong } = settings.textShadow;
+    const { normal, strong } = settings.textShadow
 
     if (element instanceof GraphComponentLabelNode) {
-      return strong;
+      return strong
     }
 
-    return normal;
+    return normal
   }
 
   private static getEdgeStrokeDashArray(
     edge: GraphComponentEdge
   ): string | undefined {
     if (edge instanceof GraphComponentFilterEdge) {
-      return settings.secondaryDashArray;
+      return settings.secondaryDashArray
     }
 
-    return;
+    return
   }
 
   private static getEdgeLabelFill(edge: GraphComponentEdge): HSLColor {
-    const { getLink, getOther } = settings.edge.textColor;
+    const { getLink, getOther } = settings.edge.textColor
 
     if (edge.link) {
-      return getLink();
+      return getLink()
     }
 
-    return getOther();
+    return getOther()
   }
 
   private static getEdgeLabelTransform(
@@ -232,92 +231,92 @@ export default class GraphComponent extends React.Component<
     element: SVGGraphicsElement
   ): string {
     if (edge.target.x >= edge.source.x) {
-      return "rotate(0)";
+      return "rotate(0)"
     }
 
-    const { x, y, width, height } = element.getBBox();
-    const rx = x + width / 2;
-    const ry = y + height / 2;
-    return `rotate(180 ${rx} ${ry})`;
+    const { x, y, width, height } = element.getBBox()
+    const rx = x + width / 2
+    const ry = y + height / 2
+    return `rotate(180 ${rx} ${ry})`
   }
 
   private static getNextState(props: Props): ComponentState {
-    const { nodes, links } = props;
-    const { baseWidth, baseHeight } = settings.size;
-    const nodeCount = nodes.length;
-    const linkCount = links.length;
-    const width = settings.size.adjustValue(baseWidth, nodeCount, linkCount);
-    const height = settings.size.adjustValue(baseHeight, nodeCount, linkCount);
+    const { nodes, links } = props
+    const { baseWidth, baseHeight } = settings.size
+    const nodeCount = nodes.length
+    const linkCount = links.length
+    const width = settings.size.adjustValue(baseWidth, nodeCount, linkCount)
+    const height = settings.size.adjustValue(baseHeight, nodeCount, linkCount)
 
     return {
       nodes,
       links,
       width,
-      height
-    };
+      height,
+    }
   }
 
   private static linkify(
     link: string | undefined,
-    content: ReactNode,
+    content: ReactElement,
     key: Key | undefined
-  ): ReactNode {
+  ): ReactElement {
     if (!link) {
-      return content;
+      return content
     }
 
     return (
-      <a href={link} target="_blank" key={key}>
+      <a href={link} target="_blank" rel="noreferrer" key={key}>
         {content}
       </a>
-    );
+    )
   }
 
   constructor(props: Props) {
-    super(props);
+    super(props)
 
-    this.id = GraphComponent.getNextId();
-    this.state = GraphComponent.getNextState(props);
+    this.id = GraphComponent.getNextId()
+    this.state = GraphComponent.getNextState(props)
   }
 
-  componentDidMount() {
-    this.startForceSimulation();
+  componentDidMount(): void {
+    this.startForceSimulation()
   }
 
-  componentWillUnmount() {
-    this.stopForceSimulation();
+  componentWillUnmount(): void {
+    this.stopForceSimulation()
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  UNSAFE_componentWillReceiveProps(nextProps: Props): void {
     if (
       nextProps.nodes === this.props.nodes &&
       nextProps.links === this.props.links
     ) {
-      return;
+      return
     }
 
-    const nextState = GraphComponent.getNextState(nextProps);
+    const nextState = GraphComponent.getNextState(nextProps)
     this.setState(nextState, () => {
-      this.stopForceSimulation();
-      this.startForceSimulation();
-    });
+      this.stopForceSimulation()
+      this.startForceSimulation()
+    })
   }
 
-  render() {
-    const { width, height, transform } = this.state;
+  render(): ReactElement {
+    const { width, height, transform } = this.state
     return (
       <div className="Graph">
         <div className="GraphBorder">
           <Button color="primary" size="small" onClick={this.relayout}>
             Improve
           </Button>
-          <svg width={width} height={height} ref={svg => this.applyDrag(svg)}>
+          <svg width={width} height={height} ref={(svg) => this.applyDrag(svg)}>
             <rect
               fill="none"
               pointerEvents="all"
               width={width}
               height={height}
-              ref={rect => this.applyZoom(rect)}
+              ref={(rect) => this.applyZoom(rect)}
             />
             <g transform={transform}>
               {this.renderEdges()}
@@ -328,15 +327,15 @@ export default class GraphComponent extends React.Component<
           </svg>
         </div>
       </div>
-    );
+    )
   }
 
   private getEdgePathIdentifier(index: number): string {
-    return `edgepath-${this.id}-${index}`;
+    return `edgepath-${this.id}-${index}`
   }
 
   private getMarkerId(type: string): string {
-    return `end-arrow-${this.id}-${type}`;
+    return `end-arrow-${this.id}-${type}`
   }
 
   private startForceSimulation() {
@@ -347,127 +346,130 @@ export default class GraphComponent extends React.Component<
       )
       .force(
         "link",
-        forceLink<{}, GraphComponentEdge>()
+        forceLink<GraphComponentNode, GraphComponentEdge>()
           .distance(GraphComponent.getLinkDistance)
           .links(this.state.links)
       )
       .force("center", forceCenter(this.state.width / 2, this.state.height / 2))
       .force("collide", forceCollide(settings.layout.getCollisionRadius()))
-      .alphaDecay(settings.layout.alphaDecay);
+      .alphaDecay(settings.layout.alphaDecay)
 
-    this.forwardForceSimulation(settings.layout.initialForwardPercentage);
+    this.forwardForceSimulation(settings.layout.initialForwardPercentage)
 
     this.force.on("tick", () =>
       this.setState({
         links: this.state.links,
-        nodes: this.state.nodes
+        nodes: this.state.nodes,
       })
-    );
+    )
   }
 
-  private forwardForceSimulation(percentage: number = 1) {
-    const { force } = this;
+  private forwardForceSimulation(percentage = 1) {
+    const { force } = this
     if (!force) {
-      return;
+      return
     }
 
     // from https://bl.ocks.org/mbostock/01ab2e85e8727d6529d20391c0fd9a16
     const n =
       Math.ceil(Math.log(force.alphaMin()) / Math.log(1 - force.alphaDecay())) *
-      percentage;
+      percentage
     for (let i = 0; i < n; ++i) {
-      force.tick();
+      force.tick()
     }
   }
 
   private stopForceSimulation() {
-    const { force } = this;
+    const { force } = this
     if (!force) {
-      return;
+      return
     }
-    force.stop();
+    force.stop()
   }
 
   private relayout = () => {
-    const { force } = this;
+    const { force } = this
     if (!force) {
-      return;
+      return
     }
-    force.alpha(settings.layout.relayoutAlpha);
-    force.restart();
-  };
+    force.alpha(settings.layout.relayoutAlpha)
+    force.restart()
+  }
 
   private applyDrag(container: SVGSVGElement | null) {
     if (!container) {
-      return;
+      return
     }
 
-    const component = this;
+    const component = this
 
-    function dragStarted(d: { y: number; x: number; fy: number; fx: number }) {
-      if (!d3Selection.event.active && component.force) {
-        component.force.alphaTarget(settings.layout.dragAlphaTarget).restart();
+    function dragStarted(
+      event: D3DragEvent<SVGElement, GraphComponentNode, unknown>,
+      d: GraphComponentNode
+    ) {
+      if (!event.active && component.force) {
+        component.force.alphaTarget(settings.layout.dragAlphaTarget).restart()
       }
-      d.fx = d.x;
-      d.fy = d.y;
+      d.fx = d.x
+      d.fy = d.y
     }
 
-    function dragged(d: { fx: number; fy: number }) {
-      d.fx = d3Selection.event.x;
-      d.fy = d3Selection.event.y;
+    function dragged(
+      event: D3DragEvent<SVGElement, GraphComponentNode, unknown>,
+      d: GraphComponentNode
+    ) {
+      d.fx = event.x
+      d.fy = event.y
     }
 
-    function dragEnded(d: { fx: number | null; fy: number | null }) {
-      if (!d3Selection.event.active && component.force) {
-        component.force.alphaTarget(0);
+    function dragEnded(
+      event: D3DragEvent<SVGElement, GraphComponentNode, unknown>,
+      d: GraphComponentNode
+    ) {
+      if (!event.active && component.force) {
+        component.force.alphaTarget(0)
       }
-      d.fx = null;
-      d.fy = null;
+      delete d.fx
+      delete d.fy
     }
 
-    type AbsolutePosition = { fx: number; fy: number };
-
-    const dragBehaviour = drag<
-      SVGElement,
-      GraphComponentNode & AbsolutePosition
-    >()
+    const dragBehaviour = drag<SVGGElement, GraphComponentNode>()
       .on("start", dragStarted)
       .on("drag", dragged)
-      .on("end", dragEnded);
+      .on("end", dragEnded)
 
     select(container)
       .selectAll<SVGGElement, GraphComponentNode>(".GraphNode")
       .data(this.state.nodes)
-      // @ts-ignore
-      .call(dragBehaviour);
+      .call(dragBehaviour)
   }
 
   private transformEdgeLabels(container: SVGGElement | null) {
     if (!container) {
-      return;
+      return
     }
 
     for (let index = 0; index < container.childNodes.length; index++) {
-      const child = container.childNodes.item(index);
+      const child = container.childNodes.item(index)
       if (!(child instanceof SVGGraphicsElement)) {
-        continue;
+        continue
       }
 
-      const edge = this.state.links[index];
+      const edge = this.state.links[index]
       if (!edge) {
-        continue;
+        continue
       }
 
-      const transform = GraphComponent.getEdgeLabelTransform(edge, child);
-      child.setAttribute("transform", transform);
+      const transform = GraphComponent.getEdgeLabelTransform(edge, child)
+      child.setAttribute("transform", transform)
     }
   }
 
   private renderEdgeLabels() {
-    const { labelOffsetX, labelOffsetY } = settings.edge;
+    const { labelOffsetX, labelOffsetY } = settings.edge
 
     return (
-      <g ref={container => this.transformEdgeLabels(container)}>
+      <g ref={(container) => this.transformEdgeLabels(container)}>
         {this.state.links.map((edge, index) => {
           const text = (
             <text
@@ -485,19 +487,25 @@ export default class GraphComponent extends React.Component<
                 {edge.text}
               </textPath>
             </text>
-          );
-          return GraphComponent.linkify(edge.link, text, index);
+          )
+          return GraphComponent.linkify(edge.link, text, index)
         })}
       </g>
-    );
+    )
   }
 
   private renderMarkers() {
-    const { color, size } = settings.marker;
+    const {
+      color,
+      size,
+    }: {
+      color: { [key: string]: () => HSLColor }
+      size: number
+    } = settings.marker
     return Object.keys(color).map((type, index) => {
-      const id = this.getMarkerId(type);
+      const id = this.getMarkerId(type)
 
-      const colorFactory = color[type];
+      const colorFactory = color[type]
 
       return (
         <marker
@@ -509,17 +517,17 @@ export default class GraphComponent extends React.Component<
           markerUnits="userSpaceOnUse"
           key={index}
         >
-          <path d="M0,-5L10,0L0,5" fill={colorFactory()} />
+          <path d="M0,-5L10,0L0,5" fill={colorFactory().formatHex()} />
         </marker>
-      );
-    });
+      )
+    })
   }
 
   private renderEdges() {
-    const { strokeWidth } = settings.edge;
+    const { strokeWidth } = settings.edge
 
     return this.state.links.map((edge, index) => {
-      const stroke = GraphComponent.getEdgeStroke(edge);
+      const stroke = GraphComponent.getEdgeStroke(edge)
       return (
         <path
           id={this.getEdgePathIdentifier(index)}
@@ -530,27 +538,27 @@ export default class GraphComponent extends React.Component<
           strokeDasharray={GraphComponent.getEdgeStrokeDashArray(edge)}
           markerEnd={this.getEdgeMarkerEnd(edge)}
         />
-      );
-    });
+      )
+    })
   }
 
   private getEdgeMarkerEnd(edge: GraphComponentEdge): string | undefined {
-    const isDirected = edge instanceof GraphComponentDirectedEdge;
-    const isFilter = edge instanceof GraphComponentFilterEdge;
+    const isDirected = edge instanceof GraphComponentDirectedEdge
+    const isFilter = edge instanceof GraphComponentFilterEdge
     if (!isDirected && !isFilter) {
-      return;
+      return
     }
 
-    const type = isDirected ? "getDirected" : "getFilter";
-    const id = this.getMarkerId(type);
-    return `url(#${id})`;
+    const type = isDirected ? "getDirected" : "getFilter"
+    const id = this.getMarkerId(type)
+    return `url(#${id})`
   }
 
   private renderNodes() {
-    const { radius, stroke } = settings.node;
+    const { radius, stroke } = settings.node
 
     return this.state.nodes.map((node, index) => {
-      const transform = `translate(${node.x}, ${node.y})`;
+      const transform = `translate(${node.x}, ${node.y})`
       const text = (
         <text
           fill={GraphComponent.getNodeTextFill(node).toString()}
@@ -559,7 +567,7 @@ export default class GraphComponent extends React.Component<
         >
           {node.text}
         </text>
-      );
+      )
       return (
         <g className="GraphNode" transform={transform} key={index}>
           <circle
@@ -570,25 +578,25 @@ export default class GraphComponent extends React.Component<
           />
           {GraphComponent.linkify(node.link, text, undefined)}
         </g>
-      );
-    });
+      )
+    })
   }
 
   private applyZoom(rect: SVGRectElement | null) {
     if (!rect) {
-      return;
+      return
     }
 
-    const component = this;
+    const component = this
 
-    function zoomed() {
-      const transform = d3Selection.event.transform.toString();
-      component.setState({ transform });
+    function zoomed(event: D3ZoomEvent<SVGRectElement, unknown>) {
+      const transform = event.transform.toString()
+      component.setState({ transform })
     }
 
-    const zoomBehaviour = zoom<SVGRectElement, {}>()
+    const zoomBehaviour = zoom<SVGRectElement, unknown>()
       .scaleExtent(settings.layout.scaleExtent)
-      .on("zoom", zoomed);
-    select(rect).call(zoomBehaviour);
+      .on("zoom", zoomed)
+    select(rect).call(zoomBehaviour)
   }
 }

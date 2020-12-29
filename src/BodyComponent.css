@@ -1,4 +1,5 @@
 .Body {
+  text-align: initial;
   display: grid;
   grid-gap: 1.4em;
   padding: 1.4em;

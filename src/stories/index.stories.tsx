@@ -1,24 +1,25 @@
-import * as React from 'react';
-
-import { storiesOf } from '@storybook/react';
-import TokenComponent from '../src/TokenComponent';
+import '../index.css'
+import * as React from 'react'
+import { storiesOf } from '@storybook/react'
+import TokenComponent from '../TokenComponent'
 import {
-    GraphItemLabel, GraphPropertyLabel, GraphVarLabel, Token, TreeLeaf,
-    TreeNode
-} from '../src/types';
-import { TokensComponent } from '../src/TokensComponent';
-import { TreeComponent } from '../src/TreeComponent';
-import QueryComponent from '../src/QueryComponent';
-import { GraphNode } from '../src/types';
-import { graph1, graph2 } from './graph-data';
-import { GraphComponentDirectedEdge, GraphComponentLabelNode, parseGraphNode } from '../src/graph/types';
-import GraphComponent from '../src/graph/GraphComponent';
+  GraphItemNodeLabel, GraphItemEdgeLabel, GraphVarNodeLabel, Token, TreeLeaf,
+  TreeNode, Item
+} from '../types'
+import '../api'
+import { TokensComponent } from '../TokensComponent'
+import { TreeComponent } from '../TreeComponent'
+import QueryComponent from '../QueryComponent'
+import { GraphNode } from '../types'
+import {graph1, graph2} from './graph-data'
+import { GraphComponentDirectedEdge, GraphComponentLabelNode, parseGraphNode } from '../graph/types'
+import GraphComponent from '../graph/GraphComponent'
 
 storiesOf('Token', module)
     .add('noun', () => {
-        const token = new Token('book', 'NNS', 'books');
-        return <TokenComponent token={token} />;
-    });
+        const token = new Token('book', 'NNS', 'books')
+        return <TokenComponent token={token} />
+    })
 
 storiesOf('Tokens', module)
     .add('empty', () =>
@@ -29,18 +30,16 @@ storiesOf('Tokens', module)
             new Token('bear', 'VBN', 'born'),
             new Token('before', 'IN', 'before'),
             new Token('1900', 'CD', '1900')
-        ];
-        return <TokensComponent tokens={tokens} />;
-    });
+        ]
+        return <TokensComponent tokens={tokens} />
+    })
 
 storiesOf('Tree', module)
     .add('simple', () => {
         const root =
-            new TreeNode('list-question',
-                         'other',
+            new TreeNode('list-question.other',
                          [
-                             new TreeNode('query',
-                                          'named',
+                             new TreeNode('query.named',
                                           [
                                               new TreeLeaf('name',
                                                            [
@@ -50,14 +49,14 @@ storiesOf('Tree', module)
                                                            ])
                                           ],
                                           'query')
-                         ]);
-        return <TreeComponent root={root} />;
+                         ])
+        return <TreeComponent root={root} />
     })
     .add('complex', () => {
         const root =
-            new TreeNode('list-question', 'other', [
-                new TreeNode('query', 'with-property', [
-                                 new TreeNode('query', 'named', [
+            new TreeNode('list-question.other', [
+                new TreeNode('query.with-property', [
+                                 new TreeNode('query.named', [
                                                   new TreeLeaf('name', [
                                                       new Token('president',
                                                                 'NNS',
@@ -65,19 +64,19 @@ storiesOf('Tree', module)
                                                   ])
                                               ],
                                               'query'),
-                                 new TreeNode('property', 'with-filter', [
+                                 new TreeNode('property.with-filter', [
                                                   new TreeLeaf('name', [
                                                       new Token('bear',
                                                                 'VBN',
                                                                 'born')
                                                   ]),
-                                                  new TreeNode('filter', 'with-modifier', [
+                                                  new TreeNode('filter.with-modifier', [
                                                                    new TreeLeaf('modifier', [
                                                                        new Token('before',
                                                                                  'IN',
                                                                                  'before')
                                                                    ]),
-                                                                   new TreeNode('value', 'number', [
+                                                                   new TreeNode('value.number', [
                                                                                     new TreeLeaf('number', [
                                                                                         new Token('1900',
                                                                                                   'CD',
@@ -91,10 +90,10 @@ storiesOf('Tree', module)
                                               'property')
                              ],
                              'query')
-            ]);
+            ])
 
-        return <TreeComponent root={root} />;
-    });
+        return <TreeComponent root={root} />
+    })
 
 storiesOf('Query', module)
     .add('simple', () => {
@@ -119,44 +118,44 @@ WHERE
       { bd:serviceParam
                   wikibase:language  "en"}
   }
-`;
-        return <QueryComponent query={query}/>;
-});
+`
+        return <QueryComponent query={query}/>
+})
 
 storiesOf('Types', module)
     .add('GraphNode', () => {
-        const node = GraphNode.decode(graph1);
+        const node = GraphNode.decode(graph1)
         return (
             <code style={{ whiteSpace: 'pre'}}>
                 {JSON.stringify(node, null, 4)}
             </code>
-        );
-    });
+        )
+    })
 
-class GraphComponentWrapper extends React.Component<{}, {first: boolean}> {
+class GraphComponentWrapper extends React.Component<unknown, {first: boolean}> {
     private static graphs = [
         ['presidents born before 1900', graph1],
         ['books written by George Orwell', graph2]
-    ];
+    ]
 
-    constructor(props: {}) {
-        super(props);
+    constructor(props: unknown) {
+        super(props)
         this.state = {
            first: true
-        };
+        }
     }
 
     onToggle = () => {
         this.setState(state => ({
             first: !state.first
-        }));
+        }))
     }
 
     render() {
-        const index = this.state.first ? 0 : 1;
-        const [name, graph] = GraphComponentWrapper.graphs[index];
-        const node = GraphNode.decode(graph);
-        const [ nodes, edges ] = parseGraphNode(node, true);
+        const index = this.state.first ? 0 : 1
+        const [name, graph] = GraphComponentWrapper.graphs[index]
+        const node = GraphNode.decode(graph)
+        const [ nodes, edges ] = parseGraphNode(node, true)
         return (
             <div>
                 <p><b>Showing:</b> {name}</p>
@@ -166,46 +165,46 @@ class GraphComponentWrapper extends React.Component<{}, {first: boolean}> {
                     links={edges}
                 />
             </div>
-        );
+        )
     }
 }
 
 storiesOf('Graph', module)
     .add('ComponentLabelNode', () => {
         const nodeLabel =
-            new GraphItemLabel({id: 30461, name: 'president'}, 'item');
-        const componentNode = GraphComponentLabelNode.fromGraphNodeLabel(nodeLabel);
+            new GraphItemNodeLabel('item', new Item('president'))
+        const componentNode = GraphComponentLabelNode.fromGraphNodeLabel(nodeLabel)
         return (
             <code style={{ whiteSpace: 'pre'}}>
                 {JSON.stringify(componentNode, null, 4)}
             </code>
-        );
+        )
     })
     .add('ComponentDirectedEdge', () => {
         const edgeLabel =
-            new GraphPropertyLabel({id: 31, name: 'is instance of'}, 'property');
-        const sourceNodeLabel = new GraphVarLabel({id: 0}, 'variable');
+            new GraphItemEdgeLabel('item', new Item('is_instance_of'))
+        const sourceNodeLabel = new GraphVarNodeLabel({id: 0}, 'variable')
         const sourceComponentNode =
-            GraphComponentLabelNode.fromGraphNodeLabel(sourceNodeLabel) as GraphComponentLabelNode;
-        const targetNodeLabel = new GraphItemLabel({id: 6256, name: 'country'}, 'item');
+            GraphComponentLabelNode.fromGraphNodeLabel(sourceNodeLabel) as GraphComponentLabelNode
+        const targetNodeLabel = new GraphItemNodeLabel('item', new Item('country'))
         const targetComponentNode =
-            GraphComponentLabelNode.fromGraphNodeLabel(targetNodeLabel) as GraphComponentLabelNode;
+            GraphComponentLabelNode.fromGraphNodeLabel(targetNodeLabel) as GraphComponentLabelNode
         const componentNode =
-            GraphComponentDirectedEdge.fromGraphEdgeLabel(edgeLabel, sourceComponentNode, targetComponentNode);
+            GraphComponentDirectedEdge.fromGraphEdgeLabel(edgeLabel, sourceComponentNode, targetComponentNode)
         return (
             <code style={{ whiteSpace: 'pre'}}>
                 {JSON.stringify(componentNode, null, 4)}
             </code>
-        );
+        )
     })
     .add('Parse', () => {
-        const node = GraphNode.decode(graph1);
-        const parsed = parseGraphNode(node, true);
+        const node = GraphNode.decode(graph1)
+        const parsed = parseGraphNode(node, true)
         return (
             <code style={{ whiteSpace: 'pre'}}>
                 {JSON.stringify(parsed, null, 4)}
             </code>
-        );
+        )
     })
     .add('GraphComponent', () =>
-        <GraphComponentWrapper />);
+        <GraphComponentWrapper />)

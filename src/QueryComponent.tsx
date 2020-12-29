@@ -1,17 +1,18 @@
-import { Wikidata } from "./wikidata";
-import { Controlled as CodeMirror } from "react-codemirror2";
-import "codemirror/lib/codemirror.css";
-import "codemirror/theme/neo.css";
-import "codemirror/mode/sparql/sparql.js";
-import "./QueryComponent.css";
-import * as React from "react";
-import { EditorConfiguration } from "codemirror";
-import OpenIcon from "@material-ui/icons/OpenInNew";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
+import { Wikidata } from "./wikidata"
+import { Controlled as CodeMirror } from "react-codemirror2"
+import "codemirror/lib/codemirror.css"
+import "codemirror/theme/neo.css"
+import "codemirror/mode/sparql/sparql.js"
+import "./QueryComponent.css"
+import * as React from "react"
+import { EditorConfiguration } from "codemirror"
+import OpenIcon from "@material-ui/icons/OpenInNew"
+import IconButton from "@material-ui/core/IconButton"
+import Tooltip from "@material-ui/core/Tooltip"
+import { ReactElement } from "react"
 
 interface Props {
-  readonly query: string;
+  readonly query: string
 }
 
 export default class QueryComponent extends React.Component<Props> {
@@ -19,33 +20,44 @@ export default class QueryComponent extends React.Component<Props> {
     mode: "application/sparql-query",
     readOnly: "nocursor",
     theme: "neo",
-    lineNumbers: true
-  };
+    lineNumbers: true,
+  }
 
-  render() {
-    const { query } = this.props;
-    const link = Wikidata.getQueryURL(query);
+  render(): ReactElement {
+    const { query } = this.props
+    const link = Wikidata.getQueryURL(query)
     return (
       <div className="Query">
         <CodeMirror
           className="QueryText"
           value={query}
           options={QueryComponent.options}
-          onBeforeChange={this.onBeforeChange}
+          onBeforeChange={() => undefined}
         />
         <div className="QueryActions">
           <Tooltip title="Open in Query Editor">
             <IconButton
               color="primary"
-              component={props => <a href={link} target="_blank" {...props} />}
+              component={React.forwardRef<HTMLAnchorElement>(function IconLink(
+                props,
+                ref
+              ) {
+                return (
+                  <a
+                    ref={ref}
+                    href={link}
+                    target="_blank"
+                    rel="noreferrer"
+                    {...props}
+                  />
+                )
+              })}
             >
               <OpenIcon />
             </IconButton>
           </Tooltip>
         </div>
       </div>
-    );
+    )
   }
-
-  private readonly onBeforeChange = () => undefined;
 }

@@ -1,45 +1,45 @@
-import * as React from "react";
-import "./App.css";
-import Form from "./FormComponent";
-import Body from "./BodyComponent";
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
+import React, { ReactElement } from "react"
+import "./App.css"
+
+import Form from "./FormComponent"
+import BodyComponent from "./BodyComponent"
+import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles"
+import CssBaseline from "@material-ui/core/CssBaseline"
+import AppBar from "@material-ui/core/AppBar"
+import Toolbar from "@material-ui/core/Toolbar"
 
 const theme = createMuiTheme({
   typography: {
-    useNextVariants: true,
-    fontFamily: "Roboto, sans-serif"
+    fontFamily: "Roboto, sans-serif",
   },
   palette: {
     primary: {
       light: "#6ab7ff",
       main: "#1e88e5",
       dark: "#005cb2",
-      contrastText: "#fff"
-    }
-  }
-});
+      contrastText: "#fff",
+    },
+  },
+})
 
 class App extends React.Component {
-  render() {
+  render(): ReactElement {
     return (
-      <MuiThemeProvider theme={theme}>
+      <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="App">
-          <AppBar position="fixed">
+          <AppBar position="sticky">
             <Toolbar>
               <Form />
             </Toolbar>
           </AppBar>
           <div className="App-body">
-            <Body />
+            <BodyComponent />
           </div>
         </div>
-      </MuiThemeProvider>
-    );
+      </ThemeProvider>
+    )
   }
 }
 
-export default App;
+export default App
