@@ -20,11 +20,11 @@ export default function Body(): ReactElement {
       <SectionComponent title="Tree" path={["parse", "tree"]}>
         <TreeComponent />
       </SectionComponent>
-      <SectionComponent title="Graph" path={["parse", "nodes"]}>
+      <SectionComponent title="Graphs" path={["parse", "nodes"]}>
         <GraphsComponent parseProperty="nodes" />
       </SectionComponent>
       <SectionComponent
-        title="Expanded Graph"
+        title="Expanded Graphs"
         path={["parse", "expanded_nodes"]}
       >
         <GraphsComponent parseProperty="expanded_nodes" />
