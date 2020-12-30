@@ -1,4 +1,4 @@
-import * as React from "react"
+import React from "react"
 import "./Token.css"
 import { scaleOrdinal } from "d3-scale"
 import { schemePaired } from "d3-scale-chromatic"

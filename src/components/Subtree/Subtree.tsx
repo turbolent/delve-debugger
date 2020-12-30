@@ -1,5 +1,5 @@
 import { Token, Tree, TreeLeaf, TreeNode } from "../../types"
-import * as React from "react"
+import React from "react"
 import "./Subtree.css"
 import { ReactElement } from "react"
 import TokenComponent from "../Token/Token"

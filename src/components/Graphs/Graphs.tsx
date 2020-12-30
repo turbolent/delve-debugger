@@ -1,19 +1,16 @@
-import { connect } from "react-redux"
-import { State } from "../../state"
-import * as React from "react"
+import React, { ReactElement } from "react"
 import Graph from "../Graph/Graph"
 import { GraphNode } from "../../types"
 import { parseGraphNode } from "../Graph/types"
 
-interface StateProps {
+export interface InputProps {
   readonly graphNodes?: GraphNode[]
+  readonly parseProperty: string
 }
 
-type Props = {
-  readonly parseProperty: string
-} & StateProps
+type Props = InputProps
 
-function Graphs({ graphNodes }: Props) {
+export default function Graphs({ graphNodes }: Props): ReactElement {
   return (
     <div>
       {(graphNodes || []).map((node: GraphNode, index: number) => {
@@ -23,9 +20,3 @@ function Graphs({ graphNodes }: Props) {
     </div>
   )
 }
-
-const mapStateToProps = (s: State, ownProps: Props): StateProps => ({
-  graphNodes: s.parse && (s.parse[ownProps.parseProperty] as GraphNode[]),
-})
-
-export default connect(mapStateToProps)(Graphs)

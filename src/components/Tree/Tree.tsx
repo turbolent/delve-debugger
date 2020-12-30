@@ -1,16 +1,15 @@
-import * as React from "react"
-import { TreeNode } from "../../types"
-import { State } from "../../state"
-import { connect } from "react-redux"
-import Subtree from "../Subtree/Subtree"
+import React, { ReactElement } from "react"
 import "./Tree.css"
-import { ReactElement } from "react"
+import { TreeNode } from "../../types"
+import Subtree from "../../components/Subtree/Subtree"
 
-interface StateProps {
+export interface InputProps {
   readonly root?: TreeNode
 }
 
-export function Tree({ root }: StateProps): ReactElement | null {
+type Props = InputProps
+
+export default function Tree({ root }: Props): ReactElement | null {
   if (!root) {
     return null
   }
@@ -21,9 +20,3 @@ export function Tree({ root }: StateProps): ReactElement | null {
     </div>
   )
 }
-
-const mapStateToProps = (s: State): StateProps => ({
-  root: s.parse && s.parse.tree,
-})
-
-export default connect(mapStateToProps)(Tree)

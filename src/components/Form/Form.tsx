@@ -1,33 +1,29 @@
-import { connect } from "react-redux"
-import { parseQuestion, setQuestion } from "../../actions"
-import * as React from "react"
-import { State } from "../../state"
+import React, { ReactElement } from "react"
 import "./Form.css"
 import IconButton from "@material-ui/core/IconButton"
 import BugReportIcon from "@material-ui/icons/BugReport"
-import { ReactElement } from "react"
 
-interface DispatchProps {
-  readonly request: (question: string) => void
-  readonly update: (question: string) => void
-}
-
-interface StateProps {
+export interface InputProps {
   readonly value: string
   readonly requesting: boolean
 }
 
-type Props = StateProps & DispatchProps
+export interface OutputProps {
+  readonly request: (question: string) => void
+  readonly update: (question: string) => void
+}
 
-class Form extends React.Component<Props> {
-  readonly handleChange = (
+type Props = InputProps & OutputProps
+
+export default class Form extends React.Component<Props> {
+  private readonly handleChange = (
     event: React.FormEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     const target = event.target as HTMLInputElement
     this.props.update(target.value)
   }
 
-  readonly handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  private readonly handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     this.props.request(this.props.value)
   }
@@ -50,15 +46,3 @@ class Form extends React.Component<Props> {
     )
   }
 }
-
-const mapStateToProps = ({ requesting, question }: State): StateProps => ({
-  value: question,
-  requesting,
-})
-
-const mapDispatchToProps = {
-  request: (question: string) => parseQuestion(question, true),
-  update: (question: string) => setQuestion(question),
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Form)

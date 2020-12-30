@@ -1,15 +1,14 @@
-import { connect } from "react-redux"
-import { State } from "../../state"
-import * as React from "react"
-import Query from "../Query/Query"
+import React, { ReactElement } from "react"
 import "./Queries.css"
-import { ReactElement } from "react"
+import Query from "../Query/Query"
 
-interface StateProps {
+export interface InputProps {
   readonly queries?: string[]
 }
 
-function Queries({ queries }: StateProps): ReactElement {
+type Props = InputProps
+
+export default function Queries({ queries }: Props): ReactElement {
   return (
     <div className="Queries">
       {(queries || []).map((query: string, index: number) => (
@@ -18,9 +17,3 @@ function Queries({ queries }: StateProps): ReactElement {
     </div>
   )
 }
-
-const mapStateToProps = (s: State): StateProps => ({
-  queries: s.parse && s.parse.queries,
-})
-
-export default connect(mapStateToProps)(Queries)

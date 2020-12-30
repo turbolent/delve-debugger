@@ -1,5 +1,5 @@
 import "../index.css"
-import * as React from "react"
+import React from "react"
 import { storiesOf } from "@storybook/react"
 import TokenComponent from "../components/Token/Token"
 import {
@@ -12,8 +12,8 @@ import {
   Item,
 } from "../types"
 import "../api"
-import { Tokens } from "../components/Tokens/Tokens"
-import { Tree } from "../components/Tree/Tree"
+import Tokens from "../components/Tokens/Tokens"
+import Tree from "../components/Tree/Tree"
 import Query from "../components/Query/Query"
 import { GraphNode } from "../types"
 import { graph1, graph2 } from "./graph-data"

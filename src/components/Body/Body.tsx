@@ -1,37 +1,33 @@
-import * as React from "react"
-import TokensComponent from "../Tokens/Tokens"
-import SectionComponent from "../Section/Section"
-import ErrorComponent from "../Error/Error"
-import TreeComponent from "../Tree/Tree"
-import QueriesComponent from "../Queries/Queries"
-import GraphsComponent from "../Graphs/Graphs"
+import React, { ReactElement } from "react"
 import "./Body.css"
-import { ReactElement } from "react"
+import Tokens from "../../containers/Tokens/Tokens"
+import Section from "../../containers/Section/Section"
+import Error from "../../containers/Error/Error"
+import Tree from "../../containers/Tree/Tree"
+import Queries from "../../containers/Queries/Queries"
+import Graphs from "../../containers/Graphs/Graphs"
 
 export default function Body(): ReactElement {
   return (
     <div className="Body">
-      <SectionComponent title="Error" path={["error"]}>
-        <ErrorComponent />
-      </SectionComponent>
-      <SectionComponent title="Tokens" path={["parse", "tokens"]}>
-        <TokensComponent />
-      </SectionComponent>
-      <SectionComponent title="Tree" path={["parse", "tree"]}>
-        <TreeComponent />
-      </SectionComponent>
-      <SectionComponent title="Graphs" path={["parse", "nodes"]}>
-        <GraphsComponent parseProperty="nodes" />
-      </SectionComponent>
-      <SectionComponent
-        title="Expanded Graphs"
-        path={["parse", "expanded_nodes"]}
-      >
-        <GraphsComponent parseProperty="expanded_nodes" />
-      </SectionComponent>
-      <SectionComponent title="Queries" path={["parse", "queries"]}>
-        <QueriesComponent />
-      </SectionComponent>
+      <Section title="Error" path={["error"]}>
+        <Error />
+      </Section>
+      <Section title="Tokens" path={["parse", "tokens"]}>
+        <Tokens />
+      </Section>
+      <Section title="Tree" path={["parse", "tree"]}>
+        <Tree />
+      </Section>
+      <Section title="Graphs" path={["parse", "nodes"]}>
+        <Graphs parseProperty="nodes" />
+      </Section>
+      <Section title="Expanded Graphs" path={["parse", "expanded_nodes"]}>
+        <Graphs parseProperty="expanded_nodes" />
+      </Section>
+      <Section title="Queries" path={["parse", "queries"]}>
+        <Queries />
+      </Section>
     </div>
   )
 }

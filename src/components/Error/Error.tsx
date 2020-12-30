@@ -1,18 +1,12 @@
-import * as React from "react"
+import React, { ReactElement } from "react"
 import "./Error.css"
-import { connect } from "react-redux"
-import { State } from "../../state"
 
-interface StateProps {
+export interface InputProps {
   readonly message: string
 }
 
-function Error({ message }: StateProps) {
+type Props = InputProps
+
+export default function Error({ message }: Props): ReactElement {
   return <div className="Error">{message}</div>
 }
-
-const mapStateToProps = (s: State): StateProps => ({
-  message: s.error || "",
-})
-
-export default connect(mapStateToProps)(Error)

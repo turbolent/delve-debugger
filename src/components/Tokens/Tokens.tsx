@@ -1,16 +1,15 @@
-import * as React from "react"
-import TokenComponent from "../Token/Token"
+import React, { ReactElement } from "react"
 import "./Tokens.css"
+import TokenComponent from "../Token/Token"
 import { Token } from "../../types"
-import { State } from "../../state"
-import { connect } from "react-redux"
-import { ReactElement } from "react"
 
-interface StateProps {
+export interface InputProps {
   readonly tokens: Token[]
 }
 
-export function Tokens({ tokens }: StateProps): ReactElement {
+type Props = InputProps
+
+export default function Tokens({ tokens }: Props): ReactElement {
   return (
     <div className="Tokens">
       {tokens.map((token, index) => (
@@ -19,9 +18,3 @@ export function Tokens({ tokens }: StateProps): ReactElement {
     </div>
   )
 }
-
-const mapStateToProps = (s: State): StateProps => ({
-  tokens: (s.parse && s.parse.tokens) || [],
-})
-
-export default connect(mapStateToProps)(Tokens)

@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react"
 import "./App.css"
 
-import Form from "../Form/Form"
+import Form from "../../containers/Form/Form"
 import Body from "../Body/Body"
 import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import CssBaseline from "@material-ui/core/CssBaseline"
