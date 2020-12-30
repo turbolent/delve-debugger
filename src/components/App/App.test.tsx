@@ -2,7 +2,7 @@ import React from "react"
 import { render, screen } from "@testing-library/react"
 import App from "./App"
 import { Provider } from "react-redux";
-import createStore from "./store";
+import createStore from "../../store";
 
 test("renders without crashing", () => {
   const store = createStore();

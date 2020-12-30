@@ -1,19 +1,19 @@
 import '../index.css'
 import * as React from 'react'
 import { storiesOf } from '@storybook/react'
-import TokenComponent from '../TokenComponent'
+import TokenComponent from '../components/Token/Token'
 import {
   GraphItemNodeLabel, GraphItemEdgeLabel, GraphVarNodeLabel, Token, TreeLeaf,
   TreeNode, Item
 } from '../types'
 import '../api'
-import { TokensComponent } from '../TokensComponent'
-import { TreeComponent } from '../TreeComponent'
-import QueryComponent from '../QueryComponent'
+import { Tokens } from '../components/Tokens/Tokens'
+import { Tree } from '../components/Tree/Tree'
+import Query from '../components/Query/Query'
 import { GraphNode } from '../types'
 import {graph1, graph2} from './graph-data'
-import { GraphComponentDirectedEdge, GraphComponentLabelNode, parseGraphNode } from '../graph/types'
-import GraphComponent from '../graph/GraphComponent'
+import { GraphComponentDirectedEdge, GraphComponentLabelNode, parseGraphNode } from '../components/Graph/types'
+import Graph from '../components/Graph/Graph'
 
 storiesOf('Token', module)
     .add('noun', () => {
@@ -23,7 +23,7 @@ storiesOf('Token', module)
 
 storiesOf('Tokens', module)
     .add('empty', () =>
-        <TokensComponent tokens={[]} />)
+        <Tokens tokens={[]} />)
     .add('sentence', () => {
         const tokens = [
             new Token('president', 'NNS', 'presidents'),
@@ -31,7 +31,7 @@ storiesOf('Tokens', module)
             new Token('before', 'IN', 'before'),
             new Token('1900', 'CD', '1900')
         ]
-        return <TokensComponent tokens={tokens} />
+        return <Tokens tokens={tokens} />
     })
 
 storiesOf('Tree', module)
@@ -50,7 +50,7 @@ storiesOf('Tree', module)
                                           ],
                                           'query')
                          ])
-        return <TreeComponent root={root} />
+        return <Tree root={root} />
     })
     .add('complex', () => {
         const root =
@@ -92,7 +92,7 @@ storiesOf('Tree', module)
                              'query')
             ])
 
-        return <TreeComponent root={root} />
+        return <Tree root={root} />
     })
 
 storiesOf('Query', module)
@@ -119,7 +119,7 @@ WHERE
                   wikibase:language  "en"}
   }
 `
-        return <QueryComponent query={query}/>
+        return <Query query={query}/>
 })
 
 storiesOf('Types', module)
@@ -160,7 +160,7 @@ class GraphComponentWrapper extends React.Component<unknown, {first: boolean}> {
             <div>
                 <p><b>Showing:</b> {name}</p>
                 <p><button onClick={this.onToggle}>Toggle</button></p>
-                <GraphComponent
+                <Graph
                     nodes={nodes}
                     links={edges}
                 />
@@ -206,5 +206,5 @@ storiesOf('Graph', module)
             </code>
         )
     })
-    .add('GraphComponent', () =>
+    .add('Graph', () =>
         <GraphComponentWrapper />)

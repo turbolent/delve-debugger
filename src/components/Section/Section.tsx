@@ -1,11 +1,11 @@
 import * as React from "react"
 import { ReactElement } from "react"
 import { connect } from "react-redux"
-import { State } from "./state"
+import { State } from "../../state"
 import Typography from "@material-ui/core/Typography"
 import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
-import "./SectionComponent.css"
+import "./Section.css"
 
 interface StateProps {
   readonly show: boolean
@@ -19,7 +19,7 @@ interface OwnProps {
 
 type Props = StateProps & OwnProps
 
-function SectionComponent({
+function Section({
   title,
   show,
   children,
@@ -59,4 +59,4 @@ const mapStateToProps = (state: State, ownProps: OwnProps): StateProps => {
   }
 }
 
-export default connect(mapStateToProps)(SectionComponent)
+export default connect(mapStateToProps)(Section)

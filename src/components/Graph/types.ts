@@ -14,7 +14,7 @@ import {
   GraphOutEdge,
   GraphValueNodeLabel,
   GraphVarNodeLabel,
-} from "../types"
+} from "../../types"
 
 // Nodes
 

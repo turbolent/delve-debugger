@@ -1,8 +1,8 @@
 import { connect } from "react-redux"
-import { parseQuestion, setQuestion } from "./actions"
+import { parseQuestion, setQuestion } from "../../actions"
 import * as React from "react"
-import { State } from "./state"
-import "./FormComponent.css"
+import { State } from "../../state"
+import "./Form.css"
 import IconButton from "@material-ui/core/IconButton"
 import BugReportIcon from "@material-ui/icons/BugReport"
 import { ReactElement } from "react"
@@ -19,7 +19,7 @@ interface StateProps {
 
 type Props = StateProps & DispatchProps
 
-class FormComponent extends React.Component<Props> {
+class Form extends React.Component<Props> {
   readonly handleChange = (
     event: React.FormEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
@@ -61,4 +61,4 @@ const mapDispatchToProps = {
   update: (question: string) => setQuestion(question),
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FormComponent)
+export default connect(mapStateToProps, mapDispatchToProps)(Form)

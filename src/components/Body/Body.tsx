@@ -1,14 +1,14 @@
 import * as React from "react"
-import TokensComponent from "./TokensComponent"
-import SectionComponent from "./SectionComponent"
-import ErrorComponent from "./ErrorComponent"
-import TreeComponent from "./TreeComponent"
-import QueriesComponent from "./QueriesComponent"
-import GraphsComponent from "./GraphsComponent"
-import "./BodyComponent.css"
+import TokensComponent from "../Tokens/Tokens"
+import SectionComponent from "../Section/Section"
+import ErrorComponent from "../Error/Error"
+import TreeComponent from "../Tree/Tree"
+import QueriesComponent from "../Queries/Queries"
+import GraphsComponent from "../Graphs/Graphs"
+import "./Body.css"
 import { ReactElement } from "react"
 
-export default function BodyComponent(): ReactElement {
+export default function Body(): ReactElement {
   return (
     <div className="Body">
       <SectionComponent title="Error" path={["error"]}>

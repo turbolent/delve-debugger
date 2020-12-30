@@ -18,7 +18,7 @@ import {
 } from "./types"
 import settings from "./settings"
 import { HSLColor } from "d3-color"
-import "./GraphComponent.css"
+import "./Graph.css"
 import { Key, ReactElement } from "react"
 import { select } from "d3-selection"
 import { D3DragEvent, drag } from "d3-drag"
@@ -38,7 +38,7 @@ interface ComponentState {
   transform?: string
 }
 
-export default class GraphComponent extends React.Component<
+export default class Graph extends React.Component<
   Props,
   ComponentState
 > {
@@ -101,7 +101,7 @@ export default class GraphComponent extends React.Component<
   }
 
   private static edgePath(edge: GraphComponentEdge): string {
-    const [offsetX, offsetY] = GraphComponent.getLinkOffset(edge)
+    const [offsetX, offsetY] = Graph.getLinkOffset(edge)
     return (
       "M" +
       [edge.source.x, edge.source.y].join(",") +
@@ -275,8 +275,8 @@ export default class GraphComponent extends React.Component<
   constructor(props: Props) {
     super(props)
 
-    this.id = GraphComponent.getNextId()
-    this.state = GraphComponent.getNextState(props)
+    this.id = Graph.getNextId()
+    this.state = Graph.getNextState(props)
   }
 
   componentDidMount(): void {
@@ -295,7 +295,7 @@ export default class GraphComponent extends React.Component<
       return
     }
 
-    const nextState = GraphComponent.getNextState(nextProps)
+    const nextState = Graph.getNextState(nextProps)
     this.setState(nextState, () => {
       this.stopForceSimulation()
       this.startForceSimulation()
@@ -347,7 +347,7 @@ export default class GraphComponent extends React.Component<
       .force(
         "link",
         forceLink<GraphComponentNode, GraphComponentEdge>()
-          .distance(GraphComponent.getLinkDistance)
+          .distance(Graph.getLinkDistance)
           .links(this.state.links)
       )
       .force("center", forceCenter(this.state.width / 2, this.state.height / 2))
@@ -460,7 +460,7 @@ export default class GraphComponent extends React.Component<
         continue
       }
 
-      const transform = GraphComponent.getEdgeLabelTransform(edge, child)
+      const transform = Graph.getEdgeLabelTransform(edge, child)
       child.setAttribute("transform", transform)
     }
   }
@@ -476,8 +476,8 @@ export default class GraphComponent extends React.Component<
               className="GraphEdgeLabel"
               dy={labelOffsetY}
               fontWeight="bold"
-              style={{ textShadow: GraphComponent.getTextShadow(edge) }}
-              fill={GraphComponent.getEdgeLabelFill(edge).toString()}
+              style={{ textShadow: Graph.getTextShadow(edge) }}
+              fill={Graph.getEdgeLabelFill(edge).toString()}
               key={index}
             >
               <textPath
@@ -488,7 +488,7 @@ export default class GraphComponent extends React.Component<
               </textPath>
             </text>
           )
-          return GraphComponent.linkify(edge.link, text, index)
+          return Graph.linkify(edge.link, text, index)
         })}
       </g>
     )
@@ -527,15 +527,15 @@ export default class GraphComponent extends React.Component<
     const { strokeWidth } = settings.edge
 
     return this.state.links.map((edge, index) => {
-      const stroke = GraphComponent.getEdgeStroke(edge)
+      const stroke = Graph.getEdgeStroke(edge)
       return (
         <path
           id={this.getEdgePathIdentifier(index)}
-          d={GraphComponent.edgePath(edge)}
+          d={Graph.edgePath(edge)}
           key={`line-${index}`}
           stroke={stroke.toString()}
           strokeWidth={strokeWidth}
-          strokeDasharray={GraphComponent.getEdgeStrokeDashArray(edge)}
+          strokeDasharray={Graph.getEdgeStrokeDashArray(edge)}
           markerEnd={this.getEdgeMarkerEnd(edge)}
         />
       )
@@ -561,9 +561,9 @@ export default class GraphComponent extends React.Component<
       const transform = `translate(${node.x}, ${node.y})`
       const text = (
         <text
-          fill={GraphComponent.getNodeTextFill(node).toString()}
-          fontWeight={GraphComponent.getNodeTextFontWeight(node)}
-          style={{ textShadow: GraphComponent.getTextShadow(node) }}
+          fill={Graph.getNodeTextFill(node).toString()}
+          fontWeight={Graph.getNodeTextFontWeight(node)}
+          style={{ textShadow: Graph.getTextShadow(node) }}
         >
           {node.text}
         </text>
@@ -572,11 +572,11 @@ export default class GraphComponent extends React.Component<
         <g className="GraphNode" transform={transform} key={index}>
           <circle
             r={radius}
-            fill={GraphComponent.getNodeFill(node).toString()}
+            fill={Graph.getNodeFill(node).toString()}
             strokeWidth={stroke.width}
-            stroke={GraphComponent.getNodeStroke(node).toString()}
+            stroke={Graph.getNodeStroke(node).toString()}
           />
-          {GraphComponent.linkify(node.link, text, undefined)}
+          {Graph.linkify(node.link, text, undefined)}
         </g>
       )
     })

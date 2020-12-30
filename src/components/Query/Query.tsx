@@ -1,9 +1,9 @@
-import { Wikidata } from "./wikidata"
+import { Wikidata } from "../../wikidata"
 import { Controlled as CodeMirror } from "react-codemirror2"
 import "codemirror/lib/codemirror.css"
 import "codemirror/theme/neo.css"
 import "codemirror/mode/sparql/sparql.js"
-import "./QueryComponent.css"
+import "./Query.css"
 import * as React from "react"
 import { EditorConfiguration } from "codemirror"
 import OpenIcon from "@material-ui/icons/OpenInNew"
@@ -15,7 +15,7 @@ interface Props {
   readonly query: string
 }
 
-export default class QueryComponent extends React.Component<Props> {
+export default class Query extends React.Component<Props> {
   private static options: EditorConfiguration = {
     mode: "application/sparql-query",
     readOnly: "nocursor",
@@ -31,7 +31,7 @@ export default class QueryComponent extends React.Component<Props> {
         <CodeMirror
           className="QueryText"
           value={query}
-          options={QueryComponent.options}
+          options={Query.options}
           onBeforeChange={() => undefined}
         />
         <div className="QueryActions">

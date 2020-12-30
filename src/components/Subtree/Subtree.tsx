@@ -1,8 +1,8 @@
-import { Token, Tree, TreeLeaf, TreeNode } from "./types"
+import { Token, Tree, TreeLeaf, TreeNode } from "../../types"
 import * as React from "react"
-import "./SubtreeComponent.css"
+import "./Subtree.css"
 import { ReactElement } from "react"
-import TokenComponent from "./TokenComponent"
+import TokenComponent from "../Token/Token"
 import { scaleOrdinal } from "d3-scale"
 import { schemeCategory10 } from "d3-scale-chromatic"
 
@@ -16,20 +16,20 @@ interface Props {
   readonly children: (Tree | Token)[]
 }
 
-class SubtreeComponent extends React.Component<Props> {
+class Subtree extends React.Component<Props> {
   static renderTreeNode(node: TreeNode, key: number): ReactElement {
     return (
-      <SubtreeComponent name={node.name} type={node.type} key={key}>
+      <Subtree name={node.name} type={node.type} key={key}>
         {node.children}
-      </SubtreeComponent>
+      </Subtree>
     )
   }
 
   static renderTreeLeaf(leaf: TreeLeaf, key: number): ReactElement {
     return (
-      <SubtreeComponent name={leaf.name} key={key}>
+      <Subtree name={leaf.name} key={key}>
         {leaf.tokens}
-      </SubtreeComponent>
+      </Subtree>
     )
   }
 
@@ -61,11 +61,11 @@ class SubtreeComponent extends React.Component<Props> {
 
     const childNodes = children.map((child, key) => {
       if (child instanceof TreeNode) {
-        return SubtreeComponent.renderTreeNode(child, key)
+        return Subtree.renderTreeNode(child, key)
       } else if (child instanceof TreeLeaf) {
-        return SubtreeComponent.renderTreeLeaf(child, key)
+        return Subtree.renderTreeLeaf(child, key)
       } else if (child instanceof Token) {
-        return SubtreeComponent.renderToken(child, key)
+        return Subtree.renderToken(child, key)
       }
 
       throw new Error("Unsupported child: " + child)
@@ -81,4 +81,4 @@ class SubtreeComponent extends React.Component<Props> {
   }
 }
 
-export default SubtreeComponent
+export default Subtree

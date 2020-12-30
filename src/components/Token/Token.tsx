@@ -1,8 +1,8 @@
 import * as React from "react"
-import "./TokenComponent.css"
+import "./Token.css"
 import { scaleOrdinal } from "d3-scale"
 import { schemePaired } from "d3-scale-chromatic"
-import { Token } from "./types"
+import { Token } from "../../types"
 import { ReactElement } from "react"
 
 const tags = ["JJ", "NN", "VB", "W", "DT", "IN", "POS", "RB", "CD", "CC"]

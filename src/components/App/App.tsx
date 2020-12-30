@@ -1,8 +1,8 @@
 import React, { ReactElement } from "react"
 import "./App.css"
 
-import Form from "./FormComponent"
-import BodyComponent from "./BodyComponent"
+import Form from "../Form/Form"
+import Body from "../Body/Body"
 import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import AppBar from "@material-ui/core/AppBar"
@@ -34,7 +34,7 @@ class App extends React.Component {
             </Toolbar>
           </AppBar>
           <div className="App-body">
-            <BodyComponent />
+            <Body />
           </div>
         </div>
       </ThemeProvider>
