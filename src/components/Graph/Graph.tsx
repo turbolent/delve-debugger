@@ -38,10 +38,7 @@ interface ComponentState {
   transform?: string
 }
 
-export default class Graph extends React.Component<
-  Props,
-  ComponentState
-> {
+export default class Graph extends React.Component<Props, ComponentState> {
   private static getNextId = (() => {
     let nextId = 0
     return () => nextId++

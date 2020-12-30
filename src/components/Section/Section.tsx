@@ -19,11 +19,7 @@ interface OwnProps {
 
 type Props = StateProps & OwnProps
 
-function Section({
-  title,
-  show,
-  children,
-}: Props): ReactElement | null {
+function Section({ title, show, children }: Props): ReactElement | null {
   if (!show) {
     return null
   }

@@ -8,26 +8,26 @@ export const graph1 = {
         label: {
           type: "edge-label.property",
           property: {
-            identifier: "holds_position"
-          }
+            identifier: "holds_position",
+          },
         },
         target: {
           type: "node",
           label: {
             type: "node-label.class",
             class: {
-              identifier: "president"
-            }
-          }
-        }
+              identifier: "president",
+            },
+          },
+        },
       },
       {
         type: "edge.out",
         label: {
           type: "edge-label.property",
           property: {
-            identifier: "date_of_birth"
-          }
+            identifier: "date_of_birth",
+          },
         },
         target: {
           type: "node",
@@ -37,23 +37,23 @@ export const graph1 = {
               type: "node",
               label: {
                 type: "node-label.number",
-                number: 1900
-              }
-            }
+                number: 1900,
+              },
+            },
           },
           label: {
             type: "node-label.variable",
-            id: 2
-          }
-        }
-      }
-    ]
+            id: 2,
+          },
+        },
+      },
+    ],
   },
   label: {
     type: "node-label.variable",
-    id: 1
-  }
-};
+    id: 1,
+  },
+}
 
 export const graph2 = {
   type: "node",
@@ -65,26 +65,26 @@ export const graph2 = {
         label: {
           type: "edge-label.property",
           property: {
-            identifier: "is_instance_of"
-          }
+            identifier: "is_instance_of",
+          },
         },
         target: {
           type: "node",
           label: {
             type: "node-label.class",
             class: {
-              identifier: "book"
-            }
-          }
-        }
+              identifier: "book",
+            },
+          },
+        },
       },
       {
         type: "edge.out",
         label: {
           type: "edge-label.property",
           property: {
-            identifier: "has_author"
-          }
+            identifier: "has_author",
+          },
         },
         target: {
           type: "node",
@@ -93,27 +93,27 @@ export const graph2 = {
             label: {
               type: "edge-label.property",
               property: {
-                identifier: "name"
-              }
+                identifier: "name",
+              },
             },
             target: {
               type: "node",
               label: {
                 type: "node-label.string",
-                string: "George Orwell"
-              }
-            }
+                string: "George Orwell",
+              },
+            },
           },
           label: {
             type: "node-label.variable",
-            id: 2
-          }
-        }
-      }
-    ]
+            id: 2,
+          },
+        },
+      },
+    ],
   },
   label: {
     type: "node-label.variable",
-    id: 1
-  }
-};
+    id: 1,
+  },
+}

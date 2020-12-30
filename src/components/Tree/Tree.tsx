@@ -17,9 +17,7 @@ export function Tree({ root }: StateProps): ReactElement | null {
 
   return (
     <div className="Tree">
-      <Subtree type={root.type}>
-        {root.children}
-      </Subtree>
+      <Subtree type={root.type}>{root.children}</Subtree>
     </div>
   )
 }

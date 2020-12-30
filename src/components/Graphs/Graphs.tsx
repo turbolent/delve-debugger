@@ -25,7 +25,7 @@ function Graphs({ graphNodes }: Props) {
 }
 
 const mapStateToProps = (s: State, ownProps: Props): StateProps => ({
-  graphNodes: s.parse && s.parse[ownProps.parseProperty] as GraphNode[],
+  graphNodes: s.parse && (s.parse[ownProps.parseProperty] as GraphNode[]),
 })
 
 export default connect(mapStateToProps)(Graphs)
