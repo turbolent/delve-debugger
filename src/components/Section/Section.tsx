@@ -1,8 +1,8 @@
 import React, { PropsWithChildren, ReactElement } from "react"
 import "./Section.css"
 import Typography from "@material-ui/core/Typography"
-import Card from "@material-ui/core/Card"
-import CardContent from "@material-ui/core/CardContent"
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { Accordion, AccordionDetails, AccordionSummary } from "@material-ui/core"
 
 export interface Props {
   readonly title: string
@@ -12,11 +12,17 @@ export default function Section(
   { title, children }: PropsWithChildren<Props>
 ): ReactElement {
   return (
-    <Card className="Section">
-      <CardContent>
+    <Accordion defaultExpanded={true}>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        aria-controls="panel1a-content"
+        id="panel1a-header"
+      >
         <Typography variant="h6">{title}</Typography>
+      </AccordionSummary>
+      <AccordionDetails>
         {children}
-      </CardContent>
-    </Card>
+      </AccordionDetails>
+    </Accordion>
   )
 }
