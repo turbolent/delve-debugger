@@ -1,57 +1,50 @@
-import React, { ReactElement, ReactNode } from "react"
+import React, { ReactElement} from "react"
 import "./Body.css"
-import { Loadable, useRecoilValueLoadable } from "recoil"
-import { parseQuery } from "../../state"
 import Section from "../Section/Section"
 import Error from "../Error/Error"
 import Tokens from "../Tokens/Tokens"
-import { Parse } from "../../types"
+import { Parse, State } from "../../types"
 import Tree from "../Tree/Tree"
 
-export default function Body(): ReactElement {
+interface Props {
+  state: State
+}
 
-  const parseLoadable = useRecoilValueLoadable(parseQuery)
-
+export default function Body({ state }: Props): ReactElement {
   return (
     <div className="Body">
-      <BodyContents parseLoadable={parseLoadable}/>
+      <BodyContents state={state} />
     </div>
   )
 }
 
-function BodyContents(
-  { parseLoadable }: { parseLoadable: Loadable<Parse | undefined> }
-): ReactElement | null {
+function BodyContents({ state }: Props): ReactElement | null {
 
-  switch (parseLoadable.state) {
-    case 'loading':
-      return <div>Loading ...</div>
-    case 'hasError':
-      return <Section title="Error">
-        <Error message={parseLoadable.contents.message} />
-      </Section>
-    case 'hasValue': {
-      const parse = parseLoadable.contents
-      if (typeof parse === "undefined") {
-        return null
-      }
-      return (
-        <>
-          {
-            parse.tokens &&
-            <Section title="Tokens">
-              <Tokens tokens={parse.tokens} />
-            </Section>
-          }
-          {
-            parse.trees && parse.trees.map((tree, i) =>
-              <Section key={`tree-${i}`} title={`Tree ${i + 1}`}>
-                <Tree root={tree} />
-              </Section>
-            )
-          }
-        </>
-      )
-    }
+  if (typeof(state) === "undefined") {
+    return null
   }
+
+  if (!(state instanceof Parse)) {
+    return <Section title="Error">
+      <Error message={state.message} />
+    </Section>
+  }
+
+  return (
+    <>
+      {
+        state.tokens &&
+        <Section title="Tokens">
+          <Tokens tokens={state.tokens} />
+        </Section>
+      }
+      {
+        state.trees && state.trees.map((tree, i) =>
+            <Section key={`tree-${i}`} title={`Tree ${i + 1}`}>
+              <Tree root={tree} />
+            </Section>
+        )
+      }
+    </>
+  )
 }

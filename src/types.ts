@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-module-boundary-types */
 
 import { ReactElement } from "react"
-import TreeLink from "./components/TreeLink/TreeLink"
+
+export type State = Parse | undefined | Error
 
 export class Parse {
   readonly tokens?: Token[]

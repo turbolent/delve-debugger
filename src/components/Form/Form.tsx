@@ -1,15 +1,23 @@
-import React, { FormEvent, ReactElement, useState } from "react"
+import React, { FormEvent, ReactElement, useEffect, useState } from "react"
 import "./Form.css"
 import IconButton from "@material-ui/core/IconButton"
 import BugReportIcon from "@material-ui/icons/BugReport"
-import { useRecoilState } from "recoil"
-import { questionState } from "../../state"
 
-export default function Form(): ReactElement {
+interface Props {
+  setQuestion: (question: string) => void,
+  updateSetQuestion: (setQuestion: ((question: string) => void) | null) => void
+}
 
-  const [question, setQuestion] = useRecoilState(questionState);
+export default function Form({ setQuestion, updateSetQuestion }: Props): ReactElement {
 
-  const [value, setValue] = useState(question)
+  const [value, setValue] = useState("")
+
+  useEffect(() => {
+    updateSetQuestion(setValue)
+    return () => updateSetQuestion(null)
+  }, [
+    updateSetQuestion
+  ])
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
