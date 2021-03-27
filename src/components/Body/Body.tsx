@@ -5,6 +5,7 @@ import Error from "../Error/Error"
 import Tokens from "../Tokens/Tokens"
 import { Parse, State } from "../../types"
 import Tree from "../Tree/Tree"
+import Queries from "../Queries/Queries"
 
 interface Props {
   state: State
@@ -44,6 +45,12 @@ function BodyContents({ state }: Props): ReactElement | null {
               <Tree root={tree} />
             </Section>
         )
+      }
+      {
+        state.queries &&
+        <Section title="Queries">
+          <Queries queries={state.queries} />
+        </Section>
       }
     </>
   )
