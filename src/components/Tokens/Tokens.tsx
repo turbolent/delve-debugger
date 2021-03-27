@@ -3,11 +3,9 @@ import "./Tokens.css"
 import TokenComponent from "../Token/Token"
 import { Token } from "../../types"
 
-export interface InputProps {
+interface Props {
   readonly tokens: Token[]
 }
-
-type Props = InputProps
 
 export default function Tokens({ tokens }: Props): ReactElement {
   return (

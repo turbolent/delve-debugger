@@ -5,6 +5,7 @@
   display: inline-block;
   border: var(--common-border);
   padding: 0.2rem 0.4rem;
+  font-size: 12px;
 }
 
 .QueryActions {

@@ -6,6 +6,7 @@ import Tokens from "../Tokens/Tokens"
 import { Parse, State } from "../../types"
 import Tree from "../Tree/Tree"
 import Queries from "../Queries/Queries"
+import Graphs from "../Graphs/Graphs"
 
 interface Props {
   state: State
@@ -40,16 +41,37 @@ function BodyContents({ state }: Props): ReactElement | null {
         </Section>
       }
       {
-        state.trees && state.trees.map((tree, i) =>
-            <Section key={`tree-${i}`} title={`Tree ${i + 1}`}>
-              <Tree root={tree} />
-            </Section>
-        )
+        state.trees &&
+        <Section title="Trees">
+          {
+            state.trees.map((tree, i) =>
+              <Tree key={`tree-${i}`} root={tree} />)
+          }
+        </Section>
+      }
+      {
+        state.nodes &&
+        <Section title="Graphs">
+          <Graphs graphNodes={state.nodes} />
+        </Section>
+      }
+      {
+        state.expanded_nodes &&
+        <Section title="Expanded Graphs">
+          <Graphs graphNodes={state.expanded_nodes} />
+        </Section>
       }
       {
         state.queries &&
         <Section title="Queries">
           <Queries queries={state.queries} />
+        </Section>
+      }
+      {
+
+        state.error &&
+        <Section title="Error">
+          <Error message={state.error} />
         </Section>
       }
     </>
