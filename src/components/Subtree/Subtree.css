@@ -11,7 +11,7 @@
 .Subtree .SubtreeType,
 .Subtree .SubtreeName {
   padding: 0.4rem;
-  background: #ddd;
+  background: #eee;
   font-weight: 500;
   text-align: center;
   border-bottom: var(--common-border);
@@ -20,7 +20,7 @@
 }
 
 .Subtree .SubtreeName {
-  background: #eee;
+  background: #ddd;
 }
 
 .Subtree .SubtreeChildren {
