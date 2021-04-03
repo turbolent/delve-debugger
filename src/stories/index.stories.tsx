@@ -1,0 +1,231 @@
+import "../index.css"
+import React from "react"
+import { storiesOf } from "@storybook/react"
+import TokenComponent from "../components/Token/Token"
+import {
+  GraphItemNodeLabel,
+  GraphItemEdgeLabel,
+  GraphVarNodeLabel,
+  Token,
+  TreeTokensLeaf,
+  TreeNode,
+  Item, TreeElementLeaf,
+} from "../types"
+import "../api"
+import Tokens from "../components/Tokens/Tokens"
+import Tree from "../components/Tree/Tree"
+import Query from "../components/Query/Query"
+import { GraphNode } from "../types"
+import { graph1, graph2 } from "./graph-data"
+import {
+  GraphComponentDirectedEdge,
+  GraphComponentLabelNode,
+  parseGraphNode,
+} from "../components/Graph/types"
+import Graph from "../components/Graph/Graph"
+
+storiesOf("Token", module).add("noun", () => {
+  const token = new Token("book", "NNS", "books", 0, 4)
+  return <TokenComponent token={token} />
+})
+
+storiesOf("Tokens", module)
+  .add("empty", () => <Tokens tokens={[]} />)
+  .add("sentence", () => {
+    const tokens = [
+      new Token("president", "NNS", "presidents", 0, 9),
+      new Token("bear", "VBN", "born", 11, 4),
+      new Token("before", "IN", "before", 16, 6),
+      new Token("1900", "CD", "1900", 24, 4),
+    ]
+    return <Tokens tokens={tokens} />
+  })
+
+storiesOf("Tree", module)
+  .add("simple", () => {
+    const root = new TreeNode("list-question.other", [
+      new TreeNode(
+        "query.named",
+        [
+          new TreeTokensLeaf("name", [
+            new Token("president", "NNS", "presidents", 0, 9)
+          ])
+        ],
+        "query"
+      ),
+    ])
+    return <Tree root={root} />
+  })
+  .add("complex", () => {
+    const root = new TreeNode("list-question.other", [
+      new TreeNode(
+        "query.with-property",
+        [
+          new TreeNode(
+            "query.named",
+            [
+              new TreeTokensLeaf("name", [
+                new Token("president", "NNS", "presidents", 0, 9),
+              ]),
+              new TreeNode(
+                "entity",
+                [
+                  new TreeElementLeaf(<div>Entity</div>),
+                  ],
+                "entity"
+              ),
+            ],
+            "query"
+          ),
+          new TreeNode(
+            "property.with-filter",
+            [
+              new TreeTokensLeaf("name", [
+                new Token("bear", "VBN", "born", 11, 4)
+              ]),
+              new TreeNode(
+                "filter.with-modifier",
+                [
+                  new TreeTokensLeaf("modifier", [
+                    new Token("before", "IN", "before", 16, 6),
+                  ]),
+                  new TreeNode(
+                    "value.number",
+                    [
+                      new TreeTokensLeaf("number", [
+                        new Token("1900", "CD", "1900", 24, 4)
+                      ])
+                    ],
+                    "value"
+                  ),
+                ],
+                "filter"
+              ),
+            ],
+            "property"
+          ),
+        ],
+        "query"
+      ),
+    ])
+
+    return <Tree root={root} />
+  })
+
+storiesOf("Query", module)
+  .add("simple", () => {
+    const query = `
+PREFIX  p:    <http://www.wikidata.org/prop/>
+PREFIX  bd:   <http://www.bigdata.com/rdf#>
+PREFIX  wdt:  <http://www.wikidata.org/prop/direct/>
+PREFIX  v:    <http://www.wikidata.org/prop/statement/>
+PREFIX  wikibase: <http://wikiba.se/ontology#>
+PREFIX  xsd:  <http://www.w3.org/2001/XMLSchema#>
+PREFIX  rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX  wd:   <http://www.wikidata.org/entity/>
+
+SELECT DISTINCT  ?1 ?1Label
+WHERE
+  { { ?1 p:P39/(v:P39/(wdt:P279)*) wd:Q30461
+      { ?1  wdt:P569  ?2
+        FILTER ( year(?2) < 1900 )
+      }
+    }
+    SERVICE wikibase:label
+      { bd:serviceParam
+                  wikibase:language  "en"}
+  }
+`
+    return <Query query={query} />
+  })
+
+
+storiesOf("Types", module).add("GraphNode", () => {
+  const node = GraphNode.decode(graph1)
+  return (
+    <code style={{ whiteSpace: "pre" }}>{JSON.stringify(node, null, 4)}</code>
+  )
+})
+
+class GraphComponentWrapper extends React.Component<
+  unknown,
+  { first: boolean }
+> {
+  private static graphs = [
+    ["presidents born before 1900", graph1],
+    ["books written by George Orwell", graph2],
+  ]
+
+  constructor(props: unknown) {
+    super(props)
+    this.state = {
+      first: true,
+    }
+  }
+
+  onToggle = () => {
+    this.setState((state) => ({
+      first: !state.first,
+    }))
+  }
+
+  render() {
+    const index = this.state.first ? 0 : 1
+    const [name, graph] = GraphComponentWrapper.graphs[index]
+    const node = GraphNode.decode(graph)
+    const [nodes, edges] = parseGraphNode(node, true)
+    return (
+      <div>
+        <p>
+          <b>Showing:</b> {name}
+        </p>
+        <p>
+          <button onClick={this.onToggle}>Toggle</button>
+        </p>
+        <Graph nodes={nodes} links={edges} />
+      </div>
+    )
+  }
+}
+
+storiesOf("Graph", module)
+  .add("ComponentLabelNode", () => {
+    const nodeLabel = new GraphItemNodeLabel("item", new Item("president"))
+    const componentNode = GraphComponentLabelNode.fromGraphNodeLabel(nodeLabel)
+    return (
+      <code style={{ whiteSpace: "pre" }}>
+        {JSON.stringify(componentNode, null, 4)}
+      </code>
+    )
+  })
+  .add("ComponentDirectedEdge", () => {
+    const edgeLabel = new GraphItemEdgeLabel("item", new Item("is_instance_of"))
+    const sourceNodeLabel = new GraphVarNodeLabel({ id: 0 }, "variable")
+    const sourceComponentNode = GraphComponentLabelNode.fromGraphNodeLabel(
+      sourceNodeLabel
+    ) as GraphComponentLabelNode
+    const targetNodeLabel = new GraphItemNodeLabel("item", new Item("country"))
+    const targetComponentNode = GraphComponentLabelNode.fromGraphNodeLabel(
+      targetNodeLabel
+    ) as GraphComponentLabelNode
+    const componentNode = GraphComponentDirectedEdge.fromGraphEdgeLabel(
+      edgeLabel,
+      sourceComponentNode,
+      targetComponentNode
+    )
+    return (
+      <code style={{ whiteSpace: "pre" }}>
+        {JSON.stringify(componentNode, null, 4)}
+      </code>
+    )
+  })
+  .add("Parse", () => {
+    const node = GraphNode.decode(graph1)
+    const parsed = parseGraphNode(node, true)
+    return (
+      <code style={{ whiteSpace: "pre" }}>
+        {JSON.stringify(parsed, null, 4)}
+      </code>
+    )
+  })
+  .add("Graph", () => <GraphComponentWrapper />)
