@@ -65,7 +65,7 @@ class Subtree extends React.Component<Props> {
       } else if (child instanceof TreeTokensLeaf) {
         return Subtree.renderTreeTokensLeaf(child, key)
       } else if (child instanceof TreeElementLeaf) {
-        return child.element
+        return <div key={key}>{child.element}</div>
       } else {
         return Subtree.renderToken(child, key)
       }
