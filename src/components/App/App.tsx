@@ -28,6 +28,13 @@ const theme = createMuiTheme({
       paper: '#fff'
     }
   },
+  overrides: {
+    MuiTooltip: {
+      tooltip: {
+        fontSize: "0.8rem",
+      }
+    }
+  },
 })
 
 interface Props {
