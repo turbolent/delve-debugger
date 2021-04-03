@@ -15,6 +15,10 @@
   padding: 0.4rem 0.6rem;
 }
 
-.Token > div:first-child {
+.Token > * {
   border-bottom: var(--common-border);
+}
+
+.Token > *:last-child {
+  border-bottom: none;
 }

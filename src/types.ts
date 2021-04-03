@@ -45,19 +45,24 @@ export class Parse {
 }
 
 export class Token {
-  readonly lemma: string
-  readonly tag: string
-  readonly word: string
 
   static decode(json: any): Token {
-    return new Token(json.lemma, json.tag, json.word)
+    return new Token(
+      json.lemma,
+      json.tag,
+      json.word,
+      json.offset,
+      json.length
+    )
   }
 
-  constructor(lemma: string, tag: string, word: string) {
-    this.lemma = lemma
-    this.tag = tag
-    this.word = word
-  }
+  constructor(
+    readonly lemma: string,
+    readonly tag: string,
+    readonly word: string,
+    readonly offset: number,
+    readonly length: number
+  ) {}
 }
 
 const tokenPropertyNames = new Set(["word", "tag", "lemma"])
