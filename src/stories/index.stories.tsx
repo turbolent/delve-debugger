@@ -7,9 +7,9 @@ import {
   GraphItemEdgeLabel,
   GraphVarNodeLabel,
   Token,
-  TreeLeaf,
+  TreeTokensLeaf,
   TreeNode,
-  Item,
+  Item, TreeElementLeaf,
 } from "../types"
 import "../api"
 import Tokens from "../components/Tokens/Tokens"
@@ -25,7 +25,7 @@ import {
 import Graph from "../components/Graph/Graph"
 
 storiesOf("Token", module).add("noun", () => {
-  const token = new Token("book", "NNS", "books")
+  const token = new Token("book", "NNS", "books", 0, 4)
   return <TokenComponent token={token} />
 })
 
@@ -33,10 +33,10 @@ storiesOf("Tokens", module)
   .add("empty", () => <Tokens tokens={[]} />)
   .add("sentence", () => {
     const tokens = [
-      new Token("president", "NNS", "presidents"),
-      new Token("bear", "VBN", "born"),
-      new Token("before", "IN", "before"),
-      new Token("1900", "CD", "1900"),
+      new Token("president", "NNS", "presidents", 0, 9),
+      new Token("bear", "VBN", "born", 11, 4),
+      new Token("before", "IN", "before", 16, 6),
+      new Token("1900", "CD", "1900", 24, 4),
     ]
     return <Tokens tokens={tokens} />
   })
@@ -46,7 +46,11 @@ storiesOf("Tree", module)
     const root = new TreeNode("list-question.other", [
       new TreeNode(
         "query.named",
-        [new TreeLeaf("name", [new Token("president", "NNS", "presidents")])],
+        [
+          new TreeTokensLeaf("name", [
+            new Token("president", "NNS", "presidents", 0, 9)
+          ])
+        ],
         "query"
       ),
     ])
@@ -60,25 +64,38 @@ storiesOf("Tree", module)
           new TreeNode(
             "query.named",
             [
-              new TreeLeaf("name", [
-                new Token("president", "NNS", "presidents"),
+              new TreeTokensLeaf("name", [
+                new Token("president", "NNS", "presidents", 0, 9),
               ]),
+              new TreeNode(
+                "entity",
+                [
+                  new TreeElementLeaf(<div>Entity</div>),
+                  ],
+                "entity"
+              ),
             ],
             "query"
           ),
           new TreeNode(
             "property.with-filter",
             [
-              new TreeLeaf("name", [new Token("bear", "VBN", "born")]),
+              new TreeTokensLeaf("name", [
+                new Token("bear", "VBN", "born", 11, 4)
+              ]),
               new TreeNode(
                 "filter.with-modifier",
                 [
-                  new TreeLeaf("modifier", [
-                    new Token("before", "IN", "before"),
+                  new TreeTokensLeaf("modifier", [
+                    new Token("before", "IN", "before", 16, 6),
                   ]),
                   new TreeNode(
                     "value.number",
-                    [new TreeLeaf("number", [new Token("1900", "CD", "1900")])],
+                    [
+                      new TreeTokensLeaf("number", [
+                        new Token("1900", "CD", "1900", 24, 4)
+                      ])
+                    ],
                     "value"
                   ),
                 ],
@@ -95,8 +112,9 @@ storiesOf("Tree", module)
     return <Tree root={root} />
   })
 
-storiesOf("Query", module).add("simple", () => {
-  const query = `
+storiesOf("Query", module)
+  .add("simple", () => {
+    const query = `
 PREFIX  p:    <http://www.wikidata.org/prop/>
 PREFIX  bd:   <http://www.bigdata.com/rdf#>
 PREFIX  wdt:  <http://www.wikidata.org/prop/direct/>
@@ -118,8 +136,9 @@ WHERE
                   wikibase:language  "en"}
   }
 `
-  return <Query query={query} />
-})
+    return <Query query={query} />
+  })
+
 
 storiesOf("Types", module).add("GraphNode", () => {
   const node = GraphNode.decode(graph1)

@@ -1,4 +1,4 @@
-import { Token, Tree, TreeLeaf, TreeNode } from "../../types"
+import { Token, Tree, TreeTokensLeaf, TreeNode, TreeElementLeaf } from "../../types"
 import React from "react"
 import "./Subtree.css"
 import { ReactElement } from "react"
@@ -25,7 +25,7 @@ class Subtree extends React.Component<Props> {
     )
   }
 
-  static renderTreeLeaf(leaf: TreeLeaf, key: number): ReactElement {
+  static renderTreeTokensLeaf(leaf: TreeTokensLeaf, key: number): ReactElement {
     return (
       <Subtree name={leaf.name} key={key}>
         {leaf.tokens}
@@ -62,13 +62,13 @@ class Subtree extends React.Component<Props> {
     const childNodes = children.map((child, key) => {
       if (child instanceof TreeNode) {
         return Subtree.renderTreeNode(child, key)
-      } else if (child instanceof TreeLeaf) {
-        return Subtree.renderTreeLeaf(child, key)
-      } else if (child instanceof Token) {
+      } else if (child instanceof TreeTokensLeaf) {
+        return Subtree.renderTreeTokensLeaf(child, key)
+      } else if (child instanceof TreeElementLeaf) {
+        return <div key={key}>{child.element}</div>
+      } else {
         return Subtree.renderToken(child, key)
       }
-
-      throw new Error("Unsupported child: " + child)
     })
 
     return (

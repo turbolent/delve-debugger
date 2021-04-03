@@ -1,8 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-module-boundary-types */
 
+import { ReactElement } from "react"
+
+export type State = Parse | undefined | Error
+
 export class Parse {
   readonly tokens?: Token[]
-  readonly tree?: TreeNode
+  readonly trees?: TreeNode[]
   readonly queries?: string[]
   readonly nodes?: GraphNode[]
   readonly expanded_nodes?: GraphNode[]
@@ -13,7 +17,7 @@ export class Parse {
   static decode(json: any): Parse {
     return new Parse(
       json.tokens && json.tokens.map(Token.decode),
-      json.question && TreeNode.decode(json.question),
+      json.questions && json.questions.map((questionJSON: any) => TreeNode.decode(questionJSON)),
       json.queries,
       json.nodes &&
         json.nodes.map((nodeJSON: any) => GraphNode.decode(nodeJSON)),
@@ -25,14 +29,14 @@ export class Parse {
 
   private constructor(
     tokens: Token[],
-    tree: TreeNode,
+    trees: TreeNode[],
     queries?: string[],
     nodes?: GraphNode[],
     expanded_nodes?: GraphNode[],
     error?: string
   ) {
     this.tokens = tokens
-    this.tree = tree
+    this.trees = trees
     this.queries = queries
     this.nodes = nodes
     this.expanded_nodes = expanded_nodes
@@ -41,19 +45,24 @@ export class Parse {
 }
 
 export class Token {
-  readonly lemma: string
-  readonly tag: string
-  readonly word: string
 
   static decode(json: any): Token {
-    return new Token(json.lemma, json.tag, json.word)
+    return new Token(
+      json.lemma,
+      json.tag,
+      json.word,
+      json.offset,
+      json.length
+    )
   }
 
-  constructor(lemma: string, tag: string, word: string) {
-    this.lemma = lemma
-    this.tag = tag
-    this.word = word
-  }
+  constructor(
+    readonly lemma: string,
+    readonly tag: string,
+    readonly word: string,
+    readonly offset: number,
+    readonly length: number
+  ) {}
 }
 
 const tokenPropertyNames = new Set(["word", "tag", "lemma"])
@@ -63,9 +72,6 @@ function representsToken(json: any): boolean {
     return false
   }
   const propertyNames = new Set(Object.getOwnPropertyNames(json))
-  if (propertyNames.size !== tokenPropertyNames.size) {
-    return false
-  }
   for (const propertyName of tokenPropertyNames.values()) {
     if (!propertyNames.has(propertyName)) {
       return false
@@ -74,17 +80,41 @@ function representsToken(json: any): boolean {
   return true
 }
 
-export type Tree = TreeNode | TreeLeaf
+export type Tree = TreeNode | TreeTokensLeaf | TreeElementLeaf
 
-export class TreeLeaf {
-  readonly name: string
-  readonly tokens: Token[]
+export class TreeTokensLeaf {
 
-  constructor(name: string, tokens: Token[]) {
-    this.name = name
-    this.tokens = tokens
-  }
+  constructor(
+    readonly name: string,
+    readonly tokens: Token[]
+  ) {}
 }
+
+export class TreeElementLeaf {
+ constructor(
+   readonly element: ReactElement
+ ) {
+ }
+}
+
+type TreeNodeDecoder = (json: any) => Tree[]
+
+const treeNodeDecoders: {
+  [type: string]: TreeNodeDecoder
+} = {}
+
+export function registerTreeNodeDecoder(
+  type: string,
+  decoder: TreeNodeDecoder
+) {
+  if (graphNodeLabelConstructors[type]) {
+    throw new Error(
+      `Cannot register tree node decoder for already registered type ${type}`
+    )
+  }
+  treeNodeDecoders[type] = decoder
+}
+
 
 export class TreeNode {
   readonly type: string
@@ -109,18 +139,31 @@ export class TreeNode {
 
           if (representsToken(value[0])) {
             const tokens = value.map((element) => Token.decode(element))
-            return [new TreeLeaf(property, tokens)]
+            return [new TreeTokensLeaf(property, tokens)]
           } else {
             return value.map((element) => TreeNode.decode(element))
           }
         } else {
           if (representsToken(value)) {
-            return [new TreeLeaf(property, [Token.decode(value)])]
+            return [new TreeTokensLeaf(property, [Token.decode(value)])]
+          } else if (
+            typeof(value) === 'object' &&
+            'type' in value &&
+            value.type in treeNodeDecoders
+          ) {
+            return [
+              new TreeNode(
+                value.type,
+                treeNodeDecoders[value.type](value),
+                property,
+              )
+            ]
           } else {
             return [TreeNode.decode(value, property)]
           }
         }
       })
+      // TODO:
       .reduce((a, b) => a.concat(b), [])
 
     return new TreeNode(json.type, children, name)

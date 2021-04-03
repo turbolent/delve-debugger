@@ -1,5 +1,5 @@
 :root {
-  --common-border-color: #aaa;
+  --common-border-color: #bbb;
   --common-border: 1px solid var(--common-border-color);
 
   --header-text-color: #2976b3;

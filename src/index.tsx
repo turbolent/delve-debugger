@@ -2,45 +2,34 @@ import React from "react"
 import ReactDOM from "react-dom"
 import "./index.css"
 import App from "./components/App/App"
-import { Provider } from "react-redux"
-import createStore from "./store"
-import { parseQuestion, setQuestion, parseActionCreator } from "./actions"
-import { getSavedState, SavedState } from "./history"
-import { Parse } from "./types"
 import reportWebVitals from "./reportWebVitals"
+import { State } from "./types"
+import { getSavedQuestion } from "./history"
+import { parse } from "./api"
 
-const store = createStore()
-const root = document.getElementById("root")
+let setState: ((state: State) => void) | null = null
+let setQuestion: ((question: string) => void) | null = null
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
-    ,
+    <App
+      updateSetState={(f) => { setState = f }}
+      updateSetQuestion={(f) => { setQuestion = f }}
+    />
   </React.StrictMode>,
-  root
-)
+  document.getElementById('root')
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals()
+reportWebVitals();
 
-function loadState(state: SavedState) {
-  const { question: savedQuestion, parse: savedParse } = getSavedState()
-
-  const question = (state && state.question) || savedQuestion
-  if (question) {
-    store.dispatch(setQuestion(question))
-  }
-
-  if (savedParse) {
-    const parse = Parse.decode(savedParse)
-    store.dispatch(parseActionCreator.succeeded(parse))
-  } else if (question) {
-    store.dispatch(parseQuestion(question, false))
-  }
+async function loadState(state: { question: string }) {
+  const question = (state && state.question) || getSavedQuestion()
+  setQuestion && setQuestion(question)
+  const result = await parse(question)
+  setState && setState(result)
 }
 
 window.addEventListener("load", () => {
@@ -50,3 +39,4 @@ window.addEventListener("load", () => {
 window.addEventListener("popstate", (event: PopStateEvent) => {
   loadState(event.state)
 })
+

@@ -2,11 +2,9 @@ import React, { ReactElement } from "react"
 import "./Queries.css"
 import Query from "../Query/Query"
 
-export interface InputProps {
+interface Props {
   readonly queries?: string[]
 }
-
-type Props = InputProps
 
 export default function Queries({ queries }: Props): ReactElement {
   return (

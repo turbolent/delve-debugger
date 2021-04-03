@@ -1,33 +1,29 @@
-import React, { ReactElement } from "react"
+import React, { PropsWithChildren, ReactElement } from "react"
 import "./Section.css"
 import Typography from "@material-ui/core/Typography"
-import Card from "@material-ui/core/Card"
-import CardContent from "@material-ui/core/CardContent"
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { Accordion, AccordionDetails, AccordionSummary } from "@material-ui/core"
+import { SectionInfo } from "../SectionInfo/SectionInfo"
 
-export interface InputProps {
-  readonly show: boolean
-  readonly children?: ReactElement
+export interface Props {
   readonly title: string
-  readonly path: string[]
+  readonly info?: string
 }
 
-type Props = InputProps
-
-export default function Section({
-  title,
-  show,
-  children,
-}: Props): ReactElement | null {
-  if (!show) {
-    return null
-  }
-
+export default function Section(
+  { title, children, info }: PropsWithChildren<Props>
+): ReactElement {
   return (
-    <Card className="Section">
-      <CardContent>
-        <Typography variant="h6">{title}</Typography>
+    <Accordion defaultExpanded={true}>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+      >
+        <Typography variant="h6" style={{flexGrow: 1}}>{title}</Typography>
+        {info && <SectionInfo info={info} />}
+      </AccordionSummary>
+      <AccordionDetails>
         {children}
-      </CardContent>
-    </Card>
+      </AccordionDetails>
+    </Accordion>
   )
 }

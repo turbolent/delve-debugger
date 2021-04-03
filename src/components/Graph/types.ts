@@ -88,13 +88,13 @@ export class GraphComponentVarLabelNode extends GraphComponentLabelNode {}
 
 export class GraphComponentConjunctionNode extends GraphComponentNode {
   constructor() {
-    super("&")
+    super("AND")
   }
 }
 
 export class GraphComponentDisjunctionNode extends GraphComponentNode {
   constructor() {
-    super("|")
+    super("OR")
   }
 }
 
@@ -177,11 +177,11 @@ export function parseGraphNode(
     return [[], []]
   }
 
-  const [edgeNodes, edgeEdges]: GraphComponentNodesAndEdges = (edge &&
-    parseGraphEdge(edge, source)) || [[], []]
+  const [edgeNodes, edgeEdges] =
+    (edge && parseGraphEdge(edge, source)) || [[], []]
 
-  const [filterNodes, filterEdges]: GraphComponentNodesAndEdges = (filter &&
-    parseGraphFilter(filter, source)) || [[], []]
+  const [filterNodes, filterEdges] =
+    (filter && parseGraphFilter(filter, source)) || [[], []]
 
   const allNodes = [source].concat(edgeNodes).concat(filterNodes)
 

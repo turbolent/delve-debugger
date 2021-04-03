@@ -1,48 +1,41 @@
-import React, { ReactElement } from "react"
+import React, { FormEvent, ReactElement, useEffect, useState } from "react"
 import "./Form.css"
 import IconButton from "@material-ui/core/IconButton"
 import BugReportIcon from "@material-ui/icons/BugReport"
 
-export interface InputProps {
-  readonly value: string
-  readonly requesting: boolean
+interface Props {
+  setQuestion: (question: string) => void,
+  updateSetQuestion?: (setQuestion: ((question: string) => void) | null) => void
 }
 
-export interface OutputProps {
-  readonly request: (question: string) => void
-  readonly update: (question: string) => void
-}
+export default function Form({ setQuestion, updateSetQuestion }: Props): ReactElement {
 
-type Props = InputProps & OutputProps
+  const [value, setValue] = useState("")
 
-export default class Form extends React.Component<Props> {
-  private readonly handleChange = (
-    event: React.FormEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => {
-    const target = event.target as HTMLInputElement
-    this.props.update(target.value)
+  useEffect(() => {
+    updateSetQuestion && updateSetQuestion(setValue)
+    return () => updateSetQuestion && updateSetQuestion(null)
+  }, [
+    updateSetQuestion
+  ])
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setQuestion(value);
   }
 
-  private readonly handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    this.props.request(this.props.value)
-  }
-
-  render(): ReactElement {
-    const { value } = this.props
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <input
-          className="FormInput"
-          type="text"
-          value={value}
-          placeholder="Query"
-          onChange={this.handleChange}
-        />
-        <IconButton type="submit">
-          <BugReportIcon htmlColor="white" />
-        </IconButton>
-      </form>
-    )
-  }
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        className="FormInput"
+        type="text"
+        value={value}
+        placeholder="Query"
+        onChange={e => setValue(e.target.value)}
+      />
+      <IconButton type="submit">
+        <BugReportIcon htmlColor="white" />
+      </IconButton>
+    </form>
+  )
 }

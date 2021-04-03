@@ -1,15 +1,69 @@
-import axios from "axios"
 import {
   GraphEdgeLabel,
   GraphItemEdgeLabel,
+  GraphItemNodeLabel,
   GraphNodeLabel,
   GraphValueNodeLabel,
-  GraphItemNodeLabel,
   Item,
   Parse,
   registerGraphEdgeLabelConstructor,
   registerGraphNodeLabelConstructor,
+  registerTreeNodeDecoder,
+  TreeElementLeaf,
 } from "./types"
+import TreeLink from "./components/TreeLink/TreeLink"
+import { Wikidata } from "./wikidata"
+
+export async function parse(question: string): Promise<Parse | undefined> {
+  if (!question) {
+    return
+  }
+
+  const searchParams = new URLSearchParams({
+    sentence: question,
+  })
+
+  const response = await fetch("/api/parse?" + searchParams)
+  if (!response.ok) {
+    throw new Error(await response.text())
+  }
+
+  const data = await response.json()
+  return Parse.decode(data)
+}
+
+registerTreeNodeDecoder(
+  'entity.class',
+  ({class: { identifier, mapping }}) => {
+    const url = mapping
+      ? Wikidata.getItemURL(mapping.id)
+      : undefined
+    const identifier1 = mapping
+      ? `${identifier} (${mapping.id})`
+      : identifier
+    return [
+      new TreeElementLeaf(
+        TreeLink({
+          identifier: identifier1,
+          url: url,
+        }),
+      ),
+    ]
+  }
+)
+
+registerTreeNodeDecoder(
+  'entity.individual-mapping',
+  ({ mapping, label }) =>
+    [
+      new TreeElementLeaf(
+        TreeLink({
+          identifier: `${label} (${mapping.id})`,
+          url: Wikidata.getItemURL(mapping.id)
+        })
+      )
+    ]
+)
 
 // Parse question ontology graph provider string node label to a value node label
 
@@ -44,10 +98,13 @@ registerGraphNodeLabelConstructor(
 registerGraphNodeLabelConstructor(
   "node-label.class",
   class extends GraphNodeLabel {
-    constructor(json: { class: { identifier: string } }, _type: string) {
+    constructor(json: { class: { identifier: string, mapping?: { id: number } } }, _type: string) {
       super(_type)
-      // TODO: URL
-      const item = new Item(json.class.identifier)
+      const { identifier, mapping } = json.class
+      const url = mapping
+        ? Wikidata.getItemURL(mapping.id)
+        : undefined
+      const item = new Item(identifier, url)
       return new GraphItemNodeLabel(_type, item)
     }
   }
@@ -58,9 +115,28 @@ registerGraphNodeLabelConstructor(
 registerGraphNodeLabelConstructor(
   "node-label.individual",
   class extends GraphNodeLabel {
-    constructor(json: { individual: { identifier: string } }, _type: string) {
+    constructor(json: { individual: { identifier: string, mapping?: { id: number } } }, _type: string) {
       super(_type)
-      const item = new Item(json.individual.identifier)
+      const { identifier, mapping } = json.individual
+      const url = mapping
+        ? Wikidata.getItemURL(mapping.id)
+        : undefined
+      const item = new Item(identifier, url)
+      return new GraphItemNodeLabel(_type, item)
+    }
+  }
+)
+
+// Parse question ontology graph provider entity node label
+
+registerGraphNodeLabelConstructor(
+  "node-label.entity",
+  class extends GraphNodeLabel {
+    constructor(json: { string: string, entity: { id: number } }, _type: string) {
+      super(_type)
+      const { string, entity } = json
+      const url = Wikidata.getItemURL(entity.id)
+      const item = new Item(string, url)
       return new GraphItemNodeLabel(_type, item)
     }
   }
@@ -71,32 +147,14 @@ registerGraphNodeLabelConstructor(
 registerGraphEdgeLabelConstructor(
   "edge-label.property",
   class extends GraphEdgeLabel {
-    constructor(json: { property: { identifier: string } }, _type: string) {
+    constructor(json: { property: { identifier: string, mapping?: { id: number } } }, _type: string) {
       super(_type)
-      const item = new Item(json.property.identifier)
+      const { identifier, mapping } = json.property
+      const url = mapping
+        ? Wikidata.getPropertyURL(mapping.id)
+        : undefined
+      const item = new Item(identifier, url)
       return new GraphItemEdgeLabel(_type, item)
     }
   }
 )
-
-export type Cancel = (message?: string) => void
-
-export const parse = (question: string): [Promise<Parse>, Cancel] => {
-  const source = axios.CancelToken.source()
-
-  const promise = axios
-    .get("/api/parse", {
-      params: { sentence: question },
-      cancelToken: source.token,
-    })
-    .then((response) => Parse.decode(response.data))
-    .catch((e) => {
-      if (axios.isCancel(e)) {
-        return
-      }
-
-      throw e
-    }) as Promise<Parse>
-
-  return [promise, source.cancel.bind(source)]
-}

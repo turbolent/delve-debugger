@@ -3,11 +3,9 @@ import "./Tree.css"
 import { TreeNode } from "../../types"
 import Subtree from "../../components/Subtree/Subtree"
 
-export interface InputProps {
+interface Props {
   readonly root?: TreeNode
 }
-
-type Props = InputProps
 
 export default function Tree({ root }: Props): ReactElement | null {
   if (!root) {
