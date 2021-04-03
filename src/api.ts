@@ -34,15 +34,22 @@ export async function parse(question: string): Promise<Parse | undefined> {
 
 registerTreeNodeDecoder(
   'entity.class',
-  ({class: { identifier, mapping }}) =>
-    [
+  ({class: { identifier, mapping }}) => {
+    const url = mapping
+      ? Wikidata.getItemURL(mapping.id)
+      : undefined
+    const identifier1 = mapping
+      ? `${identifier} (${mapping.id})`
+      : identifier
+    return [
       new TreeElementLeaf(
         TreeLink({
-          identifier: `${identifier} (${mapping.id})`,
-          url: Wikidata.getItemURL(mapping.id)
-        })
-      )
+          identifier: identifier1,
+          url: url,
+        }),
+      ),
     ]
+  }
 )
 
 registerTreeNodeDecoder(
