@@ -14,7 +14,7 @@ import {
   GraphOutEdge,
   GraphValueNodeLabel,
   GraphVarNodeLabel,
-} from "../../../../delve-debugger/src/types"
+} from "../../types"
 
 // Nodes
 
