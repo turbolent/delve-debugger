@@ -5,7 +5,7 @@ import BugReportIcon from "@material-ui/icons/BugReport"
 
 interface Props {
   setQuestion: (question: string) => void,
-  updateSetQuestion: (setQuestion: ((question: string) => void) | null) => void
+  updateSetQuestion?: (setQuestion: ((question: string) => void) | null) => void
 }
 
 export default function Form({ setQuestion, updateSetQuestion }: Props): ReactElement {
@@ -13,8 +13,8 @@ export default function Form({ setQuestion, updateSetQuestion }: Props): ReactEl
   const [value, setValue] = useState("")
 
   useEffect(() => {
-    updateSetQuestion(setValue)
-    return () => updateSetQuestion(null)
+    updateSetQuestion && updateSetQuestion(setValue)
+    return () => updateSetQuestion && updateSetQuestion(null)
   }, [
     updateSetQuestion
   ])

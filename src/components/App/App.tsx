@@ -38,8 +38,8 @@ const theme = createMuiTheme({
 })
 
 interface Props {
-  updateSetState: (setState: ((state: State) => void) | null) => void
-  updateSetQuestion: (setQuestion: ((question: string) => void) | null) => void
+  updateSetState?: (setState: ((state: State) => void) | null) => void
+  updateSetQuestion?: (setQuestion: ((question: string) => void) | null) => void
 }
 
 export default function App({ updateSetState, updateSetQuestion }: Props): ReactElement {
@@ -47,8 +47,8 @@ export default function App({ updateSetState, updateSetQuestion }: Props): React
   const [state, setState] = useState<State>(undefined)
 
   useEffect(() => {
-    updateSetState(setState)
-    return () => updateSetState(null)
+    updateSetState && updateSetState(setState)
+    return () => updateSetState && updateSetState(null)
   }, [
     updateSetState
   ])
@@ -68,7 +68,10 @@ export default function App({ updateSetState, updateSetQuestion }: Props): React
       <div className="App">
         <AppBar position="sticky">
           <Toolbar>
-            <Form setQuestion={setQuestion} updateSetQuestion={updateSetQuestion}/>
+            <Form
+              setQuestion={setQuestion}
+              updateSetQuestion={updateSetQuestion}
+            />
           </Toolbar>
         </AppBar>
         <div className="App-body">
