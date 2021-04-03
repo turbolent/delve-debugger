@@ -88,13 +88,13 @@ export class GraphComponentVarLabelNode extends GraphComponentLabelNode {}
 
 export class GraphComponentConjunctionNode extends GraphComponentNode {
   constructor() {
-    super("&")
+    super("AND")
   }
 }
 
 export class GraphComponentDisjunctionNode extends GraphComponentNode {
   constructor() {
-    super("|")
+    super("OR")
   }
 }
 
