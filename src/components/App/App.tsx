@@ -32,6 +32,11 @@ const theme = createMuiTheme({
       tooltip: {
         fontSize: "0.8rem",
       }
+    },
+    MuiAccordionDetails: {
+      root: {
+        overflowX: "auto"
+      }
     }
   },
 })

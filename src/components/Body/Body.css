@@ -1,6 +1,4 @@
 .Body {
   text-align: initial;
-  display: grid;
   padding: 1.4em;
-  grid-template-columns: repeat(1, 1fr);
 }
