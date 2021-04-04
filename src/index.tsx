@@ -8,12 +8,14 @@ import { getSavedQuestion } from "./history"
 import { parse } from "./api"
 
 let setState: ((state: State) => void) | null = null
+let setRequesting: ((requesting: boolean) => void) | null = null
 let setQuestion: ((question: string) => void) | null = null
 
 ReactDOM.render(
   <React.StrictMode>
     <App
       updateSetState={(f) => { setState = f }}
+      updateSetRequesting={(f) => { setRequesting = f }}
       updateSetQuestion={(f) => { setQuestion = f }}
     />
   </React.StrictMode>,
@@ -28,7 +30,9 @@ reportWebVitals();
 async function loadState(state: { question: string }) {
   const question = (state && state.question) || getSavedQuestion()
   setQuestion && setQuestion(question)
+  setRequesting && setRequesting(true)
   const result = await parse(question)
+  setRequesting && setRequesting(false)
   setState && setState(result)
 }
 

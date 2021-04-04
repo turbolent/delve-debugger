@@ -11,6 +11,7 @@ import Body from "../Body/Body"
 import { State } from "../../types"
 import { parse } from "../../api"
 import { saveQuestion } from "../../history"
+import { LinearProgress } from "@material-ui/core";
 
 const theme = createMuiTheme({
   typography: {
@@ -39,12 +40,14 @@ const theme = createMuiTheme({
 
 interface Props {
   updateSetState?: (setState: ((state: State) => void) | null) => void
+  updateSetRequesting?: (setRequesting: ((requesting: boolean) => void) | null) => void
   updateSetQuestion?: (setQuestion: ((question: string) => void) | null) => void
 }
 
-export default function App({ updateSetState, updateSetQuestion }: Props): ReactElement {
+export default function App({ updateSetState, updateSetRequesting, updateSetQuestion }: Props): ReactElement {
 
   const [state, setState] = useState<State>(undefined)
+  const [requesting, setRequesting] = useState(false)
 
   useEffect(() => {
     updateSetState && updateSetState(setState)
@@ -53,12 +56,23 @@ export default function App({ updateSetState, updateSetQuestion }: Props): React
     updateSetState
   ])
 
+  useEffect(() => {
+    updateSetRequesting && updateSetRequesting(setRequesting)
+    return () => updateSetRequesting && updateSetRequesting(null)
+  }, [
+    updateSetRequesting
+  ])
+
   async function setQuestion(question: string) {
     try {
       saveQuestion(question)
-      setState(await parse(question))
+      setRequesting(true)
+      const result = await parse(question)
+      setRequesting(false)
+      setState(result)
     } catch (e) {
       setState(e)
+      setRequesting(false)
     }
   }
 
@@ -73,11 +87,14 @@ export default function App({ updateSetState, updateSetQuestion }: Props): React
               updateSetQuestion={updateSetQuestion}
             />
           </Toolbar>
+          {
+            requesting
+            ? <LinearProgress variant="indeterminate"/>
+            : <LinearProgress variant="determinate"/>
+          }
         </AppBar>
         <div className="App-body">
-          <React.Suspense fallback={<div>Loading...</div>}>
-            <Body state={state}/>
-          </React.Suspense>
+          <Body state={state}/>
         </div>
       </div>
     </ThemeProvider>
