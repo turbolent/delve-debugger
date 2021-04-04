@@ -64,7 +64,8 @@ export default function TokenComponent({ token }: Props): ReactElement {
   return (
     <div className="Token">
       <Typography variant="body2">{token.word}</Typography>
-      <div>{token.lemma} ({token.offset}&ndash;{token.offset + token.length})</div>
+      <div>{token.lemma}</div>
+      <div>{token.offset}&ndash;{token.offset + token.length - 1}</div>
       <div style={{ color: color(tag) }} title={ tagDescriptions[tag] }>{tag}</div>
     </div>
   )
