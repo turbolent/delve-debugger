@@ -37,7 +37,7 @@ const settings = {
     scaleExtent: [0.2, 3] as [number, number],
   },
   node: {
-    radius: 14,
+    radius: 16,
     backgroundColor: {
       getRoot(): HSLColor {
         return hsl("#bcdd9f")
