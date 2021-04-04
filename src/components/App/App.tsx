@@ -1,15 +1,13 @@
 import React, { ReactElement, useEffect, useState } from "react"
-
 import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
-
 import "./App.css"
 import Form from "../Form/Form"
 import Body from "../Body/Body"
 import { State } from "../../types"
-import { parse } from "../../api"
+import { request } from "../../api"
 import { saveQuestion } from "../../history"
 import { LinearProgress } from "@material-ui/core";
 
@@ -39,9 +37,9 @@ const theme = createMuiTheme({
 })
 
 interface Props {
-  updateSetState?: (setState: ((state: State) => void) | null) => void
-  updateSetRequesting?: (setRequesting: ((requesting: boolean) => void) | null) => void
-  updateSetQuestion?: (setQuestion: ((question: string) => void) | null) => void
+  updateSetState?: (setState: ((state: State) => void) | undefined) => void
+  updateSetRequesting?: (setRequesting: ((requesting: boolean) => void) | undefined) => void
+  updateSetQuestion?: (setQuestion: ((question: string) => void) | undefined) => void
 }
 
 export default function App({ updateSetState, updateSetRequesting, updateSetQuestion }: Props): ReactElement {
@@ -51,29 +49,21 @@ export default function App({ updateSetState, updateSetRequesting, updateSetQues
 
   useEffect(() => {
     updateSetState && updateSetState(setState)
-    return () => updateSetState && updateSetState(null)
+    return () => updateSetState && updateSetState(undefined)
   }, [
     updateSetState
   ])
 
   useEffect(() => {
     updateSetRequesting && updateSetRequesting(setRequesting)
-    return () => updateSetRequesting && updateSetRequesting(null)
+    return () => updateSetRequesting && updateSetRequesting(undefined)
   }, [
     updateSetRequesting
   ])
 
   async function setQuestion(question: string) {
-    try {
-      saveQuestion(question)
-      setRequesting(true)
-      const result = await parse(question)
-      setRequesting(false)
-      setState(result)
-    } catch (e) {
-      setState(e)
-      setRequesting(false)
-    }
+    saveQuestion(question)
+    await request(question, setRequesting, setState)
   }
 
   return (

@@ -5,11 +5,11 @@ import App from "./components/App/App"
 import reportWebVitals from "./reportWebVitals"
 import { State } from "./types"
 import { getSavedQuestion } from "./history"
-import { parse } from "./api"
+import { request } from "./api"
 
-let setState: ((state: State) => void) | null = null
-let setRequesting: ((requesting: boolean) => void) | null = null
-let setQuestion: ((question: string) => void) | null = null
+let setState: ((state: State) => void) | undefined
+let setRequesting: ((requesting: boolean) => void) | undefined
+let setQuestion: ((question: string) => void) | undefined
 
 ReactDOM.render(
   <React.StrictMode>
@@ -27,13 +27,10 @@ ReactDOM.render(
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
 
-async function loadState(state: { question: string }) {
+function loadState(state: { question: string }) {
   const question = (state && state.question) || getSavedQuestion()
   setQuestion && setQuestion(question)
-  setRequesting && setRequesting(true)
-  const result = await parse(question)
-  setRequesting && setRequesting(false)
-  setState && setState(result)
+  request(question, setRequesting, setState);
 }
 
 window.addEventListener("load", () => {

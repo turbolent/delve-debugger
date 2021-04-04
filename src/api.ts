@@ -1,20 +1,36 @@
 import {
-  GraphEdgeLabel,
-  GraphItemEdgeLabel,
-  GraphItemNodeLabel,
-  GraphNodeLabel,
-  GraphValueNodeLabel,
-  Item,
-  Parse,
-  registerGraphEdgeLabelConstructor,
-  registerGraphNodeLabelConstructor,
-  registerTreeNodeDecoder,
-  TreeElementLeaf,
+    GraphEdgeLabel,
+    GraphItemEdgeLabel,
+    GraphItemNodeLabel,
+    GraphNodeLabel,
+    GraphValueNodeLabel,
+    Item,
+    Parse,
+    registerGraphEdgeLabelConstructor,
+    registerGraphNodeLabelConstructor,
+    registerTreeNodeDecoder, State,
+    TreeElementLeaf,
 } from "./types"
 import TreeLink from "./components/TreeLink/TreeLink"
 import { Wikidata } from "./wikidata"
 
-export async function parse(question: string): Promise<Parse | undefined> {
+export async function request(
+    question: string,
+    setRequesting?: (requesting: boolean) => void,
+    setState?: (state: State) => void
+): Promise<void> {
+    setRequesting && setRequesting(true)
+    try {
+        const result = await parse(question)
+        setRequesting && setRequesting(false)
+        setState && setState(result)
+    } catch (e) {
+        setRequesting && setRequesting(false)
+        setState && setState(e)
+    }
+}
+
+async function parse(question: string): Promise<Parse | undefined> {
   if (!question) {
     return
   }
